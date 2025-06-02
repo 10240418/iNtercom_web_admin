@@ -1,17 +1,32 @@
 <template>
-  <div class="admin-list-container">
+  <div class="device-list-container">
     <!-- 页面标题 -->
     <div class="page-header">
-      <h1>管理员管理</h1>
-      <p>管理系统管理员账户信息</p>
+      <h1>设备管理</h1>
+      <p>管理门禁设备信息、状态监控和关联配置</p>
     </div>
 
     <!-- 搜索和操作栏 -->
     <div class="toolbar">
       <div class="search-section">
+        <el-select
+          v-model="buildingFilter"
+          placeholder="选择楼栋筛选"
+          style="width: 200px; margin-right: 12px"
+          clearable
+          @change="handleSearch"
+        >
+          <el-option
+            v-for="building in buildingOptions"
+            :key="building.id"
+            :label="building.building_name"
+            :value="building.id"
+          />
+        </el-select>
+
         <el-input
           v-model="searchKeyword"
-          placeholder="搜索用户名、电话"
+          placeholder="搜索设备名称、序列号、位置"
           style="width: 300px"
           clearable
           @clear="handleSearch"
@@ -25,7 +40,7 @@
       </div>
 
       <div class="action-section">
-        <el-button type="primary" @click="handleAdd" :icon="Plus"> 新增管理员 </el-button>
+        <el-button type="primary" @click="handleAdd" :icon="Plus"> 新增设备 </el-button>
         <el-button
           type="danger"
           :disabled="selectedIds.length === 0"
@@ -37,10 +52,10 @@
       </div>
     </div>
 
-    <!-- 管理员列表表格 -->
+    <!-- 设备列表表格 -->
     <el-table
       v-loading="loading"
-      :data="adminList"
+      :data="deviceList"
       style="width: 100%"
       @selection-change="handleSelectionChange"
     >
@@ -48,35 +63,51 @@
 
       <el-table-column prop="id" label="ID" width="80" />
 
-      <el-table-column prop="username" label="用户名" min-width="120">
+      <el-table-column prop="name" label="设备名称" min-width="120">
         <template #default="{ row }">
-          <el-tag type="primary">{{ row.username }}</el-tag>
+          <el-tag type="primary">{{ row.name }}</el-tag>
         </template>
       </el-table-column>
 
-      <el-table-column prop="email" label="邮箱" min-width="200" />
-
-      <el-table-column prop="phone" label="电话" min-width="130" />
-
-      <el-table-column prop="role" label="角色" min-width="100">
+      <el-table-column prop="serial_number" label="序列号" min-width="140">
         <template #default="{ row }">
-          <el-tag :type="getRoleTagType(row.role)">
-            {{ getRoleLabel(row.role) }}
+          <el-tag>{{ row.serial_number }}</el-tag>
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="location" label="位置" min-width="120" />
+
+      <el-table-column prop="building" label="所属楼栋" min-width="120">
+        <template #default="{ row }">
+          <el-tag v-if="row.building" type="info">
+            {{ row.building.building_name }}
+          </el-tag>
+          <span v-else class="text-gray">未分配</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="status" label="设备状态" min-width="100">
+        <template #default="{ row }">
+          <el-tag :type="getStatusTagType(row.status)">
+            {{ getStatusLabel(row.status) }}
           </el-tag>
         </template>
       </el-table-column>
 
-      <el-table-column prop="created_at" label="创建时间" min-width="170">
+      <el-table-column prop="updated_at" label="最后更新" min-width="170">
         <template #default="{ row }">
-          {{ formatDateTime(row.created_at) }}
+          {{ formatDateTime(row.updated_at) }}
         </template>
       </el-table-column>
 
-      <el-table-column label="操作" fixed="right" width="200">
+      <el-table-column label="操作" fixed="right" width="280">
         <template #default="{ row }">
           <el-button size="small" @click="handleView(row)" :icon="View"> 查看 </el-button>
           <el-button size="small" type="primary" @click="handleEdit(row)" :icon="Edit">
             编辑
+          </el-button>
+          <el-button size="small" type="warning" @click="handleHealthCheck(row)" :icon="Warning">
+            检测
           </el-button>
           <el-button size="small" type="danger" @click="handleDelete(row)" :icon="Delete">
             删除
@@ -99,36 +130,41 @@
     </div>
 
     <!-- 新增/编辑弹窗 -->
-    <AdminFormDialog
+    <DeviceFormDialog
       v-model:visible="dialogVisible"
-      :form-data="currentAdmin"
+      :form-data="currentDevice"
       :is-edit="isEdit"
       @success="handleFormSuccess"
     />
 
     <!-- 详情弹窗 -->
-    <AdminDetailDialog v-model:visible="detailVisible" :admin-data="currentAdmin" />
+    <DeviceDetailDialog v-model:visible="detailVisible" :device-data="currentDevice" />
   </div>
 </template>
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Search, Plus, Delete, Edit, View } from '@element-plus/icons-vue'
-import { adminAPI } from '@/api/admin.js'
+import { Search, Plus, Delete, Edit, View, Warning } from '@element-plus/icons-vue'
+import { deviceAPI } from '@/api/device.js'
+import { buildingAPI } from '@/api/building.js'
 import { formatDateTime } from '@/utils/index.js'
-import { USER_ROLE_LABELS } from '@/constants/index.js'
-import AdminFormDialog from './components/AdminFormDialog.vue'
-import AdminDetailDialog from './components/AdminDetailDialog.vue'
+import { DEVICE_STATUS_LABELS, DEVICE_STATUS_COLORS } from '@/constants/index.js'
+import DeviceFormDialog from './components/DeviceFormDialog.vue'
+import DeviceDetailDialog from './components/DeviceDetailDialog.vue'
 
 // 搜索关键词
 const searchKeyword = ref('')
+const buildingFilter = ref('')
 
 // 加载状态
 const loading = ref(false)
 
-// 管理员列表
-const adminList = ref([])
+// 设备列表
+const deviceList = ref([])
+
+// 楼栋选项
+const buildingOptions = ref([])
 
 // 选中的行
 const selectedIds = ref([])
@@ -144,25 +180,38 @@ const pagination = reactive({
 const dialogVisible = ref(false)
 const detailVisible = ref(false)
 const isEdit = ref(false)
-const currentAdmin = ref({})
+const currentDevice = ref({})
 
 /**
- * 获取管理员列表
+ * 获取楼栋选项
  */
-const getAdminList = async () => {
+const getBuildingOptions = async () => {
+  try {
+    const response = await buildingAPI.getBuildingList({ page_size: 1000 })
+    buildingOptions.value = response.data || []
+  } catch (error) {
+    console.error('获取楼栋选项失败:', error)
+  }
+}
+
+/**
+ * 获取设备列表
+ */
+const getDeviceList = async () => {
   try {
     loading.value = true
     const params = {
       page: pagination.page,
       page_size: pagination.pageSize,
       search: searchKeyword.value || undefined,
+      building_id: buildingFilter.value || undefined,
     }
 
-    const response = await adminAPI.getAdminList(params)
-    adminList.value = response.data || []
+    const response = await deviceAPI.getDeviceList(params)
+    deviceList.value = response.data || []
     pagination.total = response.total || response.data?.length || 0
   } catch (error) {
-    console.error('获取管理员列表失败:', error)
+    console.error('获取设备列表失败:', error)
   } finally {
     loading.value = false
   }
@@ -173,52 +222,80 @@ const getAdminList = async () => {
  */
 const handleSearch = () => {
   pagination.page = 1
-  getAdminList()
+  getDeviceList()
 }
 
 /**
- * 新增管理员
+ * 新增设备
  */
 const handleAdd = () => {
-  currentAdmin.value = {}
+  currentDevice.value = {}
   isEdit.value = false
   dialogVisible.value = true
 }
 
 /**
- * 编辑管理员
+ * 编辑设备
  */
 const handleEdit = (row) => {
-  currentAdmin.value = { ...row }
+  currentDevice.value = { ...row }
   isEdit.value = true
   dialogVisible.value = true
 }
 
 /**
- * 查看管理员详情
+ * 查看设备详情
  */
 const handleView = (row) => {
-  currentAdmin.value = row
+  currentDevice.value = row
   detailVisible.value = true
 }
 
 /**
- * 删除管理员
+ * 设备健康检测
+ */
+const handleHealthCheck = async (row) => {
+  try {
+    await ElMessageBox.confirm(`确认对设备 "${row.name}" 执行健康检测吗？`, '健康检测确认', {
+      confirmButtonText: '开始检测',
+      cancelButtonText: '取消',
+      type: 'warning',
+    })
+
+    const loading = ElMessage({
+      message: '正在执行健康检测...',
+      type: 'info',
+      duration: 0,
+    })
+
+    await deviceAPI.healthCheck(row.id)
+    loading.close()
+    ElMessage.success('健康检测完成')
+    getDeviceList()
+  } catch (error) {
+    if (error !== 'cancel') {
+      console.error('健康检测失败:', error)
+    }
+  }
+}
+
+/**
+ * 删除设备
  */
 const handleDelete = async (row) => {
   try {
-    await ElMessageBox.confirm(`确认删除管理员 "${row.username}" 吗？`, '删除确认', {
+    await ElMessageBox.confirm(`确认删除设备 "${row.name}" 吗？`, '删除确认', {
       confirmButtonText: '确认删除',
       cancelButtonText: '取消',
       type: 'warning',
     })
 
-    await adminAPI.deleteAdmin(row.id)
+    await deviceAPI.deleteDevice(row.id)
     ElMessage.success('删除成功')
-    getAdminList()
+    getDeviceList()
   } catch (error) {
     if (error !== 'cancel') {
-      console.error('删除管理员失败:', error)
+      console.error('删除设备失败:', error)
     }
   }
 }
@@ -228,13 +305,13 @@ const handleDelete = async (row) => {
  */
 const handleBatchDelete = async () => {
   if (selectedIds.value.length === 0) {
-    ElMessage.warning('请选择要删除的管理员')
+    ElMessage.warning('请选择要删除的设备')
     return
   }
 
   try {
     await ElMessageBox.confirm(
-      `确认删除选中的 ${selectedIds.value.length} 个管理员吗？`,
+      `确认删除选中的 ${selectedIds.value.length} 个设备吗？`,
       '批量删除确认',
       {
         confirmButtonText: '确认删除',
@@ -243,10 +320,10 @@ const handleBatchDelete = async () => {
       },
     )
 
-    await adminAPI.batchDeleteAdmins(selectedIds.value)
+    await deviceAPI.batchDeleteDevices(selectedIds.value)
     ElMessage.success('批量删除成功')
     selectedIds.value = []
-    getAdminList()
+    getDeviceList()
   } catch (error) {
     if (error !== 'cancel') {
       console.error('批量删除失败:', error)
@@ -267,7 +344,7 @@ const handleSelectionChange = (selection) => {
 const handleSizeChange = (pageSize) => {
   pagination.pageSize = pageSize
   pagination.page = 1
-  getAdminList()
+  getDeviceList()
 }
 
 /**
@@ -275,7 +352,7 @@ const handleSizeChange = (pageSize) => {
  */
 const handleCurrentChange = (page) => {
   pagination.page = page
-  getAdminList()
+  getDeviceList()
 }
 
 /**
@@ -283,36 +360,32 @@ const handleCurrentChange = (page) => {
  */
 const handleFormSuccess = () => {
   dialogVisible.value = false
-  getAdminList()
+  getDeviceList()
 }
 
 /**
- * 获取角色标签
+ * 获取状态标签
  */
-const getRoleLabel = (role) => {
-  return USER_ROLE_LABELS[role] || role
+const getStatusLabel = (status) => {
+  return DEVICE_STATUS_LABELS[status] || status
 }
 
 /**
- * 获取角色标签类型
+ * 获取状态标签类型
  */
-const getRoleTagType = (role) => {
-  const typeMap = {
-    admin: '',
-    manager: 'success',
-    operator: 'info',
-  }
-  return typeMap[role] || 'info'
+const getStatusTagType = (status) => {
+  return DEVICE_STATUS_COLORS[status] || 'info'
 }
 
 // 组件挂载时获取数据
 onMounted(() => {
-  getAdminList()
+  getBuildingOptions()
+  getDeviceList()
 })
 </script>
 
 <style scoped>
-.admin-list-container {
+.device-list-container {
   padding: 20px;
 }
 
@@ -362,5 +435,9 @@ onMounted(() => {
 .el-table {
   border-radius: 8px;
   overflow: hidden;
+}
+
+.text-gray {
+  color: #999;
 }
 </style>

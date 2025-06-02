@@ -32,7 +32,9 @@ api.interceptors.response.use(
 
     // 统一处理响应数据
     if (data.code === 0) {
-      return data.data
+      // 返回完整的响应数据，而不是只返回data字段
+      // 这样可以包含分页信息等元数据
+      return data
     } else {
       ElMessage.error(data.message || '请求失败')
       return Promise.reject(new Error(data.message || '请求失败'))

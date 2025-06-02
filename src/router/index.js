@@ -53,6 +53,20 @@ const router = createRouter({
       },
     },
     {
+      path: '/device',
+      name: 'device',
+      redirect: '/device/list',
+    },
+    {
+      path: '/device/list',
+      name: 'deviceList',
+      component: () => import('../views/device/DeviceListView.vue'),
+      meta: {
+        title: '设备管理',
+        requiresAuth: true,
+      },
+    },
+    {
       path: '/about',
       name: 'about',
       // route level code-splitting

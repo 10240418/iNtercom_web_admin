@@ -35,13 +35,15 @@ export const useUserStore = defineStore('user', {
     async login(loginData) {
       try {
         const response = await authAPI.login(loginData)
+        // 现在API返回完整响应结构，需要访问data字段
+        const data = response.data
 
-        this.token = response.token
+        this.token = data.token
         this.userInfo = {
-          user_id: response.user_id,
-          username: response.username,
-          role: response.role,
-          created_at: response.created_at,
+          user_id: data.user_id,
+          username: data.username,
+          role: data.role,
+          created_at: data.created_at,
         }
         this.isLoggedIn = true
 
@@ -49,7 +51,7 @@ export const useUserStore = defineStore('user', {
         localStorage.setItem('token', this.token)
         localStorage.setItem('userInfo', JSON.stringify(this.userInfo))
 
-        return response
+        return data
       } catch (error) {
         throw error
       }
@@ -79,9 +81,11 @@ export const useUserStore = defineStore('user', {
     async refreshToken() {
       try {
         const response = await authAPI.refreshToken()
-        this.token = response.token
+        // 适配新的响应结构
+        const data = response.data
+        this.token = data.token
         localStorage.setItem('token', this.token)
-        return response
+        return data
       } catch (error) {
         // token刷新失败，清除登录状态
         this.logout()
@@ -94,7 +98,9 @@ export const useUserStore = defineStore('user', {
      */
     async getCurrentUser() {
       try {
-        const userInfo = await authAPI.getCurrentUser()
+        const response = await authAPI.getCurrentUser()
+        // 适配新的响应结构
+        const userInfo = response.data
         this.userInfo = userInfo
         localStorage.setItem('userInfo', JSON.stringify(this.userInfo))
         return userInfo

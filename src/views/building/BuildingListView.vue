@@ -164,7 +164,7 @@ const getBuildingList = async () => {
 
     const response = await buildingAPI.getBuildingList(params)
     buildingList.value = response.data || []
-    pagination.total = response.total || 0
+    pagination.total = response.total || response.data?.length || 0
   } catch (error) {
     console.error('获取楼栋列表失败:', error)
   } finally {
