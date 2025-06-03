@@ -78,6 +78,14 @@ export const COMMON_STATUS_LABELS = {
 }
 
 /**
+ * 通用状态颜色
+ */
+export const COMMON_STATUS_COLORS = {
+  [COMMON_STATUS.ACTIVE]: 'success',
+  [COMMON_STATUS.INACTIVE]: 'info',
+}
+
+/**
  * 楼栋状态枚举
  */
 export const BUILDING_STATUS = {

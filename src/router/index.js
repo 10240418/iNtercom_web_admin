@@ -67,6 +67,20 @@ const router = createRouter({
       },
     },
     {
+      path: '/household',
+      name: 'household',
+      redirect: '/household/list',
+    },
+    {
+      path: '/household/list',
+      name: 'householdList',
+      component: () => import('../views/household/HouseholdListView.vue'),
+      meta: {
+        title: '住户管理',
+        requiresAuth: true,
+      },
+    },
+    {
       path: '/about',
       name: 'about',
       // route level code-splitting
