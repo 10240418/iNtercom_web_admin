@@ -8,14 +8,8 @@ const getBaseURL = () => {
     return import.meta.env.VITE_API_BASE_URL
   }
 
-  // 根据环境判断
-  if (import.meta.env.DEV) {
-    // 开发环境使用代理
-    return '/api'
-  } else {
-    // 生产环境直接使用后端API地址
-    return 'http://39.108.49.167:20033/api'
-  }
+  // 统一使用相对路径，让Vercel代理处理
+  return '/api'
 }
 
 // 创建axios实例
