@@ -1,5 +1,5 @@
 ---
-title: ilock
+title: intercom
 language_tabs:
   - shell: Shell
   - http: HTTP
@@ -19,7 +19,7 @@ generator: "@tarslib/widdershins v4.0.30"
 
 ---
 
-# ilock
+# intercom
 
 Base URLs:
 

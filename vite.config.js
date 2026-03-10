@@ -30,12 +30,13 @@ export default defineConfig({
   },
   server: {
     port: 5173,
+    strictPort: true,
     hmr: {
       overlay: false,
     },
     proxy: {
       '/api': {
-        target: 'http://39.108.49.167:20033',
+        target: 'http://localhost:20033',
         changeOrigin: true,
         secure: false,
         configure: (proxy, _options) => {

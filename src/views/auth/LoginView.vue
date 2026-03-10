@@ -22,7 +22,12 @@
         <div
           class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl shadow-lg shadow-indigo-500/25 mb-4"
         >
-          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg
+            class="w-8 h-8 text-white"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
@@ -51,7 +56,9 @@
           <!-- 用户名输入框 -->
           <el-form-item prop="username">
             <div class="relative">
-              <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <div
+                class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
+              >
                 <svg
                   class="w-5 h-5 text-gray-400"
                   fill="none"
@@ -78,7 +85,9 @@
           <!-- 密码输入框 -->
           <el-form-item prop="password">
             <div class="relative">
-              <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <div
+                class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
+              >
                 <svg
                   class="w-5 h-5 text-gray-400"
                   fill="none"
@@ -118,7 +127,13 @@
                     d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"
                   />
                 </svg>
-                <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  v-else
+                  class="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path
                     stroke-linecap="round"
                     stroke-linejoin="round"
@@ -139,14 +154,16 @@
           <!-- 记住密码选项 -->
           <div class="flex items-center justify-between">
             <label class="flex items-center cursor-pointer">
-              <input type="checkbox" class="sr-only" v-model="rememberMe" />
+              <input
+                type="checkbox"
+                class="sr-only"
+                v-model="rememberMe"
+              />
               <div class="relative">
-                <div
-                  :class="[
+                <div :class="[
                     'w-5 h-5 rounded border-2 transition-all duration-200',
                     rememberMe ? 'bg-indigo-500 border-indigo-500' : 'bg-white border-gray-300',
-                  ]"
-                >
+                  ]">
                   <svg
                     v-if="rememberMe"
                     class="w-3 h-3 text-white absolute top-0.5 left-0.5"
@@ -166,8 +183,7 @@
             <a
               href="#"
               class="text-sm text-indigo-600 hover:text-indigo-500 transition-colors duration-200"
-              >忘记密码？</a
-            >
+            >忘记密码？</a>
           </div>
 
           <!-- 登录按钮 -->
@@ -178,7 +194,10 @@
               :disabled="loading"
               class="w-full py-4 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold rounded-2xl shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/30 transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
-              <span v-if="loading" class="flex items-center justify-center">
+              <span
+                v-if="loading"
+                class="flex items-center justify-center"
+              >
                 <svg
                   class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
                   xmlns="http://www.w3.org/2000/svg"
@@ -207,10 +226,16 @@
         </el-form>
 
         <!-- 测试账户提示 -->
-        <div class="mt-6 p-4 bg-blue-50/80 border border-blue-200/50 rounded-2xl">
+        <div
+          class="mt-6 p-4 bg-blue-50/80 border border-blue-200/50 rounded-2xl"
+        >
           <div class="flex items-start">
             <div class="flex-shrink-0">
-              <svg class="w-5 h-5 text-blue-400 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+              <svg
+                class="w-5 h-5 text-blue-400 mt-0.5"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
                 <path
                   fill-rule="evenodd"
                   d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
@@ -229,7 +254,7 @@
       <!-- 底部文本 -->
       <div class="mt-8 text-center">
         <p class="text-sm text-gray-500">
-          © 2024 iLock设备管理系统.
+          © 2024 iNtercom管理端.
           <span class="text-gray-700">安全 · 可靠 · 高效</span>
         </p>
       </div>

@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useUserStore } from '@/stores/user.js'
-import HomeView from '../views/HomeView.vue'
 import LoginView from '../views/auth/LoginView.vue'
+import AdminLayout from '@/components/layout/AdminLayout.vue'
+import DashboardView from '@/views/dashboard/DashboardView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -17,80 +18,114 @@ const router = createRouter({
     },
     {
       path: '/',
-      name: 'home',
-      component: HomeView,
+      name: 'root',
+      component: AdminLayout,
       meta: {
-        title: '首页',
         requiresAuth: true,
       },
+      children: [
+        {
+          path: '',
+          redirect: '/dashboard',
+        },
+        {
+          path: 'dashboard',
+          name: 'dashboard',
+          component: DashboardView,
+          meta: {
+            title: '仪表盘',
+            requiresAuth: true,
+            showInNav: true,
+            icon: 'dashboard',
+          },
+        },
+        {
+          path: 'admin/list',
+          name: 'adminList',
+          component: () => import('../views/admin/AdminListView.vue'),
+          meta: {
+            title: '管理员管理',
+            requiresAuth: true,
+            showInNav: true,
+            icon: 'admin',
+          },
+        },
+        {
+          path: 'building/list',
+          name: 'buildingList',
+          component: () => import('../views/building/BuildingListView.vue'),
+          meta: {
+            title: '楼栋管理',
+            requiresAuth: true,
+            showInNav: true,
+            icon: 'building',
+          },
+        },
+        {
+          path: 'device/list',
+          name: 'deviceList',
+          component: () => import('../views/device/DeviceListView.vue'),
+          meta: {
+            title: '设备管理',
+            requiresAuth: true,
+            showInNav: true,
+            icon: 'device',
+          },
+        },
+        {
+          path: 'household/list',
+          name: 'householdList',
+          component: () => import('../views/household/HouseholdListView.vue'),
+          meta: {
+            title: '住户管理',
+            requiresAuth: true,
+            showInNav: true,
+            icon: 'household',
+          },
+        },
+        {
+          path: 'about',
+          name: 'about',
+          component: () => import('../views/AboutView.vue'),
+          meta: {
+            title: '关于',
+            requiresAuth: true,
+            showInNav: true,
+            icon: 'about',
+          },
+        },
+        {
+          path: 'call/test',
+          name: 'callTest',
+          component: () => import('../views/call/CallTestView.vue'),
+          meta: {
+            title: '通话流程测试',
+            requiresAuth: true,
+            showInNav: true,
+            icon: 'calltest',
+          },
+        },
+      ],
     },
     {
       path: '/admin',
-      name: 'admin',
       redirect: '/admin/list',
     },
     {
-      path: '/admin/list',
-      name: 'adminList',
-      component: () => import('../views/admin/AdminListView.vue'),
-      meta: {
-        title: '管理员管理',
-        requiresAuth: true,
-      },
-    },
-    {
       path: '/building',
-      name: 'building',
       redirect: '/building/list',
     },
     {
-      path: '/building/list',
-      name: 'buildingList',
-      component: () => import('../views/building/BuildingListView.vue'),
-      meta: {
-        title: '楼栋管理',
-        requiresAuth: true,
-      },
-    },
-    {
       path: '/device',
-      name: 'device',
       redirect: '/device/list',
     },
     {
-      path: '/device/list',
-      name: 'deviceList',
-      component: () => import('../views/device/DeviceListView.vue'),
-      meta: {
-        title: '设备管理',
-        requiresAuth: true,
-      },
-    },
-    {
       path: '/household',
-      name: 'household',
       redirect: '/household/list',
     },
     {
-      path: '/household/list',
-      name: 'householdList',
-      component: () => import('../views/household/HouseholdListView.vue'),
-      meta: {
-        title: '住户管理',
-        requiresAuth: true,
-      },
-    },
-    {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue'),
-      meta: {
-        title: '关于',
-        requiresAuth: true,
-      },
+      path: '/:pathMatch(.*)*',
+      redirect: '/dashboard',
     },
   ],
 })
@@ -101,7 +136,7 @@ router.beforeEach((to, from, next) => {
 
   // 设置页面标题
   if (to.meta?.title) {
-    document.title = `${to.meta.title} - iLock设备管理端`
+    document.title = `${to.meta.title} - iNtercom管理端`
   }
 
   // 检查是否需要登录
@@ -118,7 +153,7 @@ router.beforeEach((to, from, next) => {
   } else {
     // 如果已登录用户访问登录页面，跳转到首页
     if (to.name === 'login' && userStore.isLoggedIn) {
-      next({ name: 'home' })
+      next({ name: 'dashboard' })
     } else {
       next()
     }

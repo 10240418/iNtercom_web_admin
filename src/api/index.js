@@ -42,7 +42,8 @@ api.interceptors.response.use(
     const { data } = response
 
     // 统一处理响应数据
-    if (data.code === 0) {
+    // 后端成功码为 100000，兼容旧的 0
+    if (data.code === 0 || data.code === 100000) {
       // 返回完整的响应数据，而不是只返回data字段
       // 这样可以包含分页信息等元数据
       return data

@@ -1,5 +1,7 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+  <div
+    class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100"
+  >
     <!-- 背景装饰 -->
     <div class="fixed inset-0 overflow-hidden pointer-events-none">
       <div
@@ -17,7 +19,12 @@
           @click="$router.go(-1)"
           class="inline-flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-800 hover:bg-white/60 rounded-xl transition-all duration-200"
         >
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
@@ -34,7 +41,12 @@
         <div
           class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl shadow-xl shadow-blue-500/25 mb-6"
         >
-          <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg
+            class="w-10 h-10 text-white"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
@@ -43,11 +55,13 @@
             />
           </svg>
         </div>
-        <h1 class="text-4xl sm:text-5xl font-bold text-gray-900 mb-4 tracking-tight">
-          iLock设备管理系统
+        <h1
+          class="text-4xl sm:text-5xl font-bold text-gray-900 mb-4 tracking-tight"
+        >
+          iNtercom管理端
         </h1>
         <p class="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-          基于现代技术栈构建的智能门禁设备管理平台，提供安全、可靠、高效的设备管理解决方案
+          基于现代技术栈构建的智能社区门禁对讲管理平台，提供安全、可靠、高效的一体化管理能力
         </p>
         <div
           class="mt-6 inline-flex items-center gap-2 px-4 py-2 bg-green-100 text-green-800 rounded-xl font-medium"
@@ -67,7 +81,12 @@
             <div
               class="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center"
             >
-              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg
+                class="w-6 h-6 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
@@ -102,7 +121,12 @@
             <div
               class="w-12 h-12 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl flex items-center justify-center"
             >
-              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg
+                class="w-6 h-6 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
@@ -120,24 +144,24 @@
             <h3 class="text-lg font-semibold text-gray-900">技术栈</h3>
           </div>
           <div class="flex flex-wrap gap-2">
-            <span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-lg"
-              >Vue 3</span
-            >
-            <span class="px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-lg"
-              >TailwindCSS</span
-            >
-            <span class="px-3 py-1 bg-purple-100 text-purple-800 text-xs font-medium rounded-lg"
-              >Element Plus</span
-            >
-            <span class="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-lg"
-              >Vite</span
-            >
-            <span class="px-3 py-1 bg-red-100 text-red-800 text-xs font-medium rounded-lg"
-              >Pinia</span
-            >
-            <span class="px-3 py-1 bg-indigo-100 text-indigo-800 text-xs font-medium rounded-lg"
-              >Vue Router</span
-            >
+            <span
+              class="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-lg"
+            >Vue 3</span>
+            <span
+              class="px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-lg"
+            >TailwindCSS</span>
+            <span
+              class="px-3 py-1 bg-purple-100 text-purple-800 text-xs font-medium rounded-lg"
+            >Element Plus</span>
+            <span
+              class="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-lg"
+            >Vite</span>
+            <span
+              class="px-3 py-1 bg-red-100 text-red-800 text-xs font-medium rounded-lg"
+            >Pinia</span>
+            <span
+              class="px-3 py-1 bg-indigo-100 text-indigo-800 text-xs font-medium rounded-lg"
+            >Vue Router</span>
           </div>
         </div>
 
@@ -149,7 +173,12 @@
             <div
               class="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl flex items-center justify-center"
             >
-              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg
+                class="w-6 h-6 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
@@ -194,7 +223,12 @@
             <div
               class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300"
             >
-              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg
+                class="w-8 h-8 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
@@ -211,7 +245,12 @@
             <div
               class="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300"
             >
-              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg
+                class="w-8 h-8 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
@@ -228,7 +267,12 @@
             <div
               class="w-16 h-16 bg-gradient-to-br from-violet-500 to-violet-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300"
             >
-              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg
+                class="w-8 h-8 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
@@ -245,7 +289,12 @@
             <div
               class="w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300"
             >
-              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg
+                class="w-8 h-8 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
@@ -269,7 +318,9 @@
           <h3 class="text-lg font-semibold text-gray-900 mb-4">技术支持</h3>
           <div class="space-y-3">
             <div class="flex items-center gap-3">
-              <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+              <div
+                class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center"
+              >
                 <svg
                   class="w-4 h-4 text-blue-600"
                   fill="none"
@@ -290,7 +341,9 @@
               </div>
             </div>
             <div class="flex items-center gap-3">
-              <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+              <div
+                class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center"
+              >
                 <svg
                   class="w-4 h-4 text-green-600"
                   fill="none"
@@ -329,13 +382,11 @@
               <a
                 href="#"
                 class="text-indigo-600 hover:text-indigo-500 transition-colors duration-200"
-                >隐私政策</a
-              >
+              >隐私政策</a>
               <a
                 href="#"
                 class="text-indigo-600 hover:text-indigo-500 transition-colors duration-200"
-                >服务条款</a
-              >
+              >服务条款</a>
             </div>
           </div>
         </div>

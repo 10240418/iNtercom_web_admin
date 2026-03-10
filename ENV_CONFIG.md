@@ -16,7 +16,7 @@
 ```bash
 # .env.local
 VITE_API_BASE_URL=http://your-custom-api-server.com/api
-VITE_APP_TITLE=iLock设备管理端
+VITE_APP_TITLE=iNtercom管理端
 ```
 
 ## Vercel部署环境变量配置
@@ -42,7 +42,7 @@ Environment: Production, Preview, Development
 
 ```
 Name: VITE_APP_TITLE
-Value: iLock设备管理端
+Value: iNtercom管理端
 Environment: Production, Preview, Development
 ```
 

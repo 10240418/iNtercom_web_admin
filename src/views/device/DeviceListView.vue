@@ -33,14 +33,24 @@
           @keyup.enter="handleSearch"
         >
           <template #prefix>
-            <el-icon><Search /></el-icon>
+            <el-icon>
+              <Search />
+            </el-icon>
           </template>
         </el-input>
-        <el-button type="primary" @click="handleSearch" :loading="loading"> 搜索 </el-button>
+        <el-button
+          type="primary"
+          @click="handleSearch"
+          :loading="loading"
+        > 搜索 </el-button>
       </div>
 
       <div class="action-section">
-        <el-button type="primary" @click="handleAdd" :icon="Plus"> 新增设备 </el-button>
+        <el-button
+          type="primary"
+          @click="handleAdd"
+          :icon="Plus"
+        > 新增设备 </el-button>
         <el-button
           type="danger"
           :disabled="selectedIds.length === 0"
@@ -59,34 +69,67 @@
       style="width: 100%"
       @selection-change="handleSelectionChange"
     >
-      <el-table-column type="selection" width="55" />
+      <el-table-column
+        type="selection"
+        width="55"
+      />
 
-      <el-table-column prop="id" label="ID" width="80" />
+      <el-table-column
+        prop="id"
+        label="ID"
+        width="80"
+      />
 
-      <el-table-column prop="name" label="设备名称" min-width="120">
+      <el-table-column
+        prop="name"
+        label="设备名称"
+        min-width="120"
+      >
         <template #default="{ row }">
           <el-tag type="primary">{{ row.name }}</el-tag>
         </template>
       </el-table-column>
 
-      <el-table-column prop="serial_number" label="序列号" min-width="140">
+      <el-table-column
+        prop="serial_number"
+        label="序列号"
+        min-width="140"
+      >
         <template #default="{ row }">
           <el-tag>{{ row.serial_number }}</el-tag>
         </template>
       </el-table-column>
 
-      <el-table-column prop="location" label="位置" min-width="120" />
+      <el-table-column
+        prop="location"
+        label="位置"
+        min-width="120"
+      />
 
-      <el-table-column prop="building" label="所属楼栋" min-width="120">
+      <el-table-column
+        prop="building"
+        label="所属楼栋"
+        min-width="120"
+      >
         <template #default="{ row }">
-          <el-tag v-if="row.building" type="info">
+          <el-tag
+            v-if="row.building"
+            type="info"
+          >
             {{ row.building.building_name }}
           </el-tag>
-          <span v-else class="text-gray">未分配</span>
+          <span
+            v-else
+            class="text-gray"
+          >未分配</span>
         </template>
       </el-table-column>
 
-      <el-table-column prop="status" label="设备状态" min-width="100">
+      <el-table-column
+        prop="status"
+        label="设备状态"
+        min-width="100"
+      >
         <template #default="{ row }">
           <el-tag :type="getStatusTagType(row.status)">
             {{ getStatusLabel(row.status) }}
@@ -94,22 +137,49 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="updated_at" label="最后更新" min-width="170">
+      <el-table-column
+        prop="updated_at"
+        label="最后更新"
+        min-width="170"
+      >
         <template #default="{ row }">
           {{ formatDateTime(row.updated_at) }}
         </template>
       </el-table-column>
 
-      <el-table-column label="操作" fixed="right" width="280">
+      <el-table-column
+        label="操作"
+        fixed="right"
+        width="280"
+      >
         <template #default="{ row }">
-          <el-button size="small" @click="handleView(row)" :icon="View"> 查看 </el-button>
-          <el-button size="small" type="primary" @click="handleEdit(row)" :icon="Edit">
+          <el-button
+            size="small"
+            @click="handleView(row)"
+            :icon="View"
+          > 查看 </el-button>
+          <el-button
+            size="small"
+            type="primary"
+            @click="handleEdit(row)"
+            :icon="Edit"
+          >
             编辑
           </el-button>
-          <el-button size="small" type="warning" @click="handleHealthCheck(row)" :icon="Warning">
+          <el-button
+            size="small"
+            type="warning"
+            @click="handleHealthCheck(row)"
+            :icon="Warning"
+          >
             检测
           </el-button>
-          <el-button size="small" type="danger" @click="handleDelete(row)" :icon="Delete">
+          <el-button
+            size="small"
+            type="danger"
+            @click="handleDelete(row)"
+            :icon="Delete"
+          >
             删除
           </el-button>
         </template>
@@ -138,7 +208,10 @@
     />
 
     <!-- 详情弹窗 -->
-    <DeviceDetailDialog v-model:visible="detailVisible" :device-data="currentDevice" />
+    <DeviceDetailDialog
+      v-model:visible="detailVisible"
+      :device-data="currentDevice"
+    />
   </div>
 </template>
 
@@ -255,6 +328,7 @@ const handleView = (row) => {
  * 设备健康检测
  */
 const handleHealthCheck = async (row) => {
+  let loadingMessage = null
   try {
     await ElMessageBox.confirm(`确认对设备 "${row.name}" 执行健康检测吗？`, '健康检测确认', {
       confirmButtonText: '开始检测',
@@ -262,19 +336,23 @@ const handleHealthCheck = async (row) => {
       type: 'warning',
     })
 
-    const loading = ElMessage({
+    loadingMessage = ElMessage({
       message: '正在执行健康检测...',
       type: 'info',
       duration: 0,
     })
 
     await deviceAPI.healthCheck(row.id)
-    loading.close()
     ElMessage.success('健康检测完成')
     getDeviceList()
   } catch (error) {
     if (error !== 'cancel') {
       console.error('健康检测失败:', error)
+      ElMessage.error('健康检测失败，请稍后重试')
+    }
+  } finally {
+    if (loadingMessage) {
+      loadingMessage.close()
     }
   }
 }
