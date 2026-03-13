@@ -89,4 +89,32 @@ export const buildingAPI = {
   getBuildingHouseholds(buildingId, params = {}) {
     return api.get(`/buildings/${buildingId}/households`, { params })
   },
+
+  /**
+   * 获取楼栋户号生成模板
+   */
+  getHouseholdTemplate(buildingId) {
+    return api.get(`/buildings/${buildingId}/household-template`)
+  },
+
+  /**
+   * 保存楼栋户号生成模板
+   */
+  saveHouseholdTemplate(buildingId, data) {
+    return api.put(`/buildings/${buildingId}/household-template`, data)
+  },
+
+  /**
+   * 批量创建楼栋户号
+   */
+  batchCreateBuildingHouseholds(buildingId, data) {
+    return api.post(`/buildings/${buildingId}/households/batch`, data)
+  },
+
+  /**
+   * 回滚批量创建结果
+   */
+  rollbackBuildingHouseholds(buildingId, data) {
+    return api.post(`/buildings/${buildingId}/households/rollback`, data)
+  },
 }

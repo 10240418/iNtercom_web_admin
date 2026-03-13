@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useUserStore } from '@/stores/user.js'
-import LoginView from '../views/auth/LoginView.vue'
-import AdminLayout from '@/components/layout/AdminLayout.vue'
-import DashboardView from '@/views/dashboard/DashboardView.vue'
+
+const LoginView = () => import('../views/auth/LoginView.vue')
+const AdminLayout = () => import('@/components/layout/AdminLayout.vue')
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -14,6 +14,7 @@ const router = createRouter({
       meta: {
         title: '登录',
         requiresAuth: false,
+        theme: 'default',
       },
     },
     {
@@ -26,18 +27,7 @@ const router = createRouter({
       children: [
         {
           path: '',
-          redirect: '/dashboard',
-        },
-        {
-          path: 'dashboard',
-          name: 'dashboard',
-          component: DashboardView,
-          meta: {
-            title: '仪表盘',
-            requiresAuth: true,
-            showInNav: true,
-            icon: 'dashboard',
-          },
+          redirect: '/building/list',
         },
         {
           path: 'admin/list',
@@ -48,6 +38,7 @@ const router = createRouter({
             requiresAuth: true,
             showInNav: true,
             icon: 'admin',
+            theme: 'default',
           },
         },
         {
@@ -59,6 +50,7 @@ const router = createRouter({
             requiresAuth: true,
             showInNav: true,
             icon: 'building',
+            theme: 'default',
           },
         },
         {
@@ -70,6 +62,7 @@ const router = createRouter({
             requiresAuth: true,
             showInNav: true,
             icon: 'device',
+            theme: 'default',
           },
         },
         {
@@ -79,19 +72,21 @@ const router = createRouter({
           meta: {
             title: '住户管理',
             requiresAuth: true,
-            showInNav: true,
+            showInNav: false,
             icon: 'household',
+            theme: 'default',
           },
         },
         {
-          path: 'about',
-          name: 'about',
-          component: () => import('../views/AboutView.vue'),
+          path: 'staff/list',
+          name: 'staffList',
+          component: () => import('../views/staff/StaffListView.vue'),
           meta: {
-            title: '关于',
+            title: '物业员工管理',
             requiresAuth: true,
             showInNav: true,
-            icon: 'about',
+            icon: 'staff',
+            theme: 'default',
           },
         },
         {
@@ -103,6 +98,7 @@ const router = createRouter({
             requiresAuth: true,
             showInNav: true,
             icon: 'calltest',
+            theme: 'default',
           },
         },
       ],
@@ -124,8 +120,12 @@ const router = createRouter({
       redirect: '/household/list',
     },
     {
+      path: '/staff',
+      redirect: '/staff/list',
+    },
+    {
       path: '/:pathMatch(.*)*',
-      redirect: '/dashboard',
+      redirect: '/building/list',
     },
   ],
 })
@@ -138,6 +138,9 @@ router.beforeEach((to, from, next) => {
   if (to.meta?.title) {
     document.title = `${to.meta.title} - iNtercom管理端`
   }
+
+  // 切换主题：将 data-theme 写入 <html>，CSS 变量随之生效
+  document.documentElement.dataset.theme = to.meta?.theme ?? 'default'
 
   // 检查是否需要登录
   if (to.meta?.requiresAuth) {
@@ -153,7 +156,7 @@ router.beforeEach((to, from, next) => {
   } else {
     // 如果已登录用户访问登录页面，跳转到首页
     if (to.name === 'login' && userStore.isLoggedIn) {
-      next({ name: 'dashboard' })
+      next({ name: 'buildingList' })
     } else {
       next()
     }

@@ -1,17 +1,17 @@
 <template>
   <div
-    class="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-50 to-blue-100 flex items-center justify-center p-4"
+    class="flex min-h-screen items-center justify-center bg-[radial-gradient(circle_at_top_left,var(--c-primary-bg),transparent_35%),radial-gradient(circle_at_bottom_right,var(--c-primary-light),transparent_25%)] bg-page-bg p-4 text-text-primary"
   >
     <!-- 背景装饰 -->
     <div class="fixed inset-0 overflow-hidden pointer-events-none">
       <div
-        class="absolute top-1/4 -left-20 w-72 h-72 bg-gradient-to-br from-indigo-300/30 to-purple-300/30 rounded-full blur-3xl"
+        class="absolute top-1/4 -left-20 h-72 w-72 rounded-full bg-primary opacity-20 blur-3xl"
       ></div>
       <div
-        class="absolute bottom-1/4 -right-20 w-96 h-96 bg-gradient-to-tr from-blue-300/30 to-indigo-300/30 rounded-full blur-3xl"
+        class="absolute bottom-1/4 -right-20 h-96 w-96 rounded-full bg-primary-light opacity-30 blur-3xl"
       ></div>
       <div
-        class="absolute top-3/4 left-1/4 w-64 h-64 bg-gradient-to-bl from-violet-300/20 to-blue-300/20 rounded-full blur-3xl"
+        class="absolute left-1/4 top-3/4 h-64 w-64 rounded-full bg-primary-dark opacity-10 blur-3xl"
       ></div>
     </div>
 
@@ -20,7 +20,7 @@
       <!-- Logo区域 -->
       <div class="text-center mb-8">
         <div
-          class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl shadow-lg shadow-indigo-500/25 mb-4"
+          class="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,var(--c-primary),var(--c-primary-dark))] shadow-lg"
         >
           <svg
             class="w-8 h-8 text-white"
@@ -36,14 +36,12 @@
             />
           </svg>
         </div>
-        <h1 class="text-3xl font-bold text-gray-900 mb-2">欢迎回来</h1>
-        <p class="text-gray-600">请登录您的账户</p>
+        <h1 class="mb-2 text-3xl font-bold text-text-primary">欢迎回来</h1>
+        <p class="text-text-secondary">请登录您的账户</p>
       </div>
 
       <!-- 登录表单卡片 -->
-      <div
-        class="bg-white/80 backdrop-blur-xl rounded-3xl border border-white/20 shadow-xl shadow-gray-900/10 p-8"
-      >
+      <div class="app-surface rounded-3xl p-8 shadow-xl shadow-black/5 backdrop-blur-xl">
         <el-form
           ref="loginFormRef"
           :model="loginForm"
@@ -60,7 +58,7 @@
                 class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
               >
                 <svg
-                  class="w-5 h-5 text-gray-400"
+                  class="h-5 w-5 text-text-muted"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -77,7 +75,7 @@
                 v-model="loginForm.username"
                 type="text"
                 placeholder="请输入用户名"
-                class="w-full pl-12 pr-4 py-4 bg-gray-50/80 border border-gray-200/50 rounded-2xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all duration-200"
+                class="w-full rounded-2xl border border-border bg-page-bg py-4 pl-12 pr-4 text-text-primary placeholder-text-muted transition-all duration-200 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
           </el-form-item>
@@ -89,7 +87,7 @@
                 class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
               >
                 <svg
-                  class="w-5 h-5 text-gray-400"
+                  class="h-5 w-5 text-text-muted"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -106,12 +104,12 @@
                 v-model="loginForm.password"
                 :type="showPassword ? 'text' : 'password'"
                 placeholder="请输入密码"
-                class="w-full pl-12 pr-12 py-4 bg-gray-50/80 border border-gray-200/50 rounded-2xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all duration-200"
+                class="w-full rounded-2xl border border-border bg-page-bg py-4 pl-12 pr-12 text-text-primary placeholder-text-muted transition-all duration-200 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary"
               />
               <button
                 type="button"
                 @click="showPassword = !showPassword"
-                class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 transition-colors duration-200"
+                class="absolute inset-y-0 right-0 flex items-center pr-4 text-text-muted transition-colors duration-200 hover:text-text-primary"
               >
                 <svg
                   v-if="showPassword"
@@ -162,7 +160,7 @@
               <div class="relative">
                 <div :class="[
                     'w-5 h-5 rounded border-2 transition-all duration-200',
-                    rememberMe ? 'bg-indigo-500 border-indigo-500' : 'bg-white border-gray-300',
+                    rememberMe ? 'bg-primary border-primary' : 'bg-card border-border',
                   ]">
                   <svg
                     v-if="rememberMe"
@@ -178,11 +176,11 @@
                   </svg>
                 </div>
               </div>
-              <span class="ml-3 text-sm text-gray-700">记住我</span>
+              <span class="ml-3 text-sm text-text-primary">记住我</span>
             </label>
             <a
               href="#"
-              class="text-sm text-indigo-600 hover:text-indigo-500 transition-colors duration-200"
+              class="text-sm text-primary transition-colors duration-200 hover:text-primary-dark"
             >忘记密码？</a>
           </div>
 
@@ -192,7 +190,7 @@
               type="button"
               @click="handleLogin"
               :disabled="loading"
-              class="w-full py-4 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold rounded-2xl shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/30 transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              class="app-button app-button-primary w-full rounded-2xl py-4 disabled:cursor-not-allowed disabled:opacity-50 disabled:transform-none"
             >
               <span
                 v-if="loading"
@@ -226,13 +224,11 @@
         </el-form>
 
         <!-- 测试账户提示 -->
-        <div
-          class="mt-6 p-4 bg-blue-50/80 border border-blue-200/50 rounded-2xl"
-        >
+        <div class="app-inline-card mt-6 border-primary bg-primary-bg p-4">
           <div class="flex items-start">
             <div class="flex-shrink-0">
               <svg
-                class="w-5 h-5 text-blue-400 mt-0.5"
+                class="mt-0.5 h-5 w-5 text-primary"
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >
@@ -244,8 +240,8 @@
               </svg>
             </div>
             <div class="ml-3">
-              <h4 class="text-sm font-medium text-blue-800">测试账户</h4>
-              <p class="text-sm text-blue-700">用户名：admin，密码：admin123</p>
+              <h4 class="text-sm font-medium text-primary-dark">测试账户</h4>
+              <p class="text-sm text-primary">用户名：admin，密码：admin123</p>
             </div>
           </div>
         </div>
@@ -253,9 +249,9 @@
 
       <!-- 底部文本 -->
       <div class="mt-8 text-center">
-        <p class="text-sm text-gray-500">
+        <p class="text-sm text-text-secondary">
           © 2024 iNtercom管理端.
-          <span class="text-gray-700">安全 · 可靠 · 高效</span>
+          <span class="text-text-primary">安全 · 可靠 · 高效</span>
         </p>
       </div>
     </div>

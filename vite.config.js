@@ -6,8 +6,8 @@ import vueJsx from '@vitejs/plugin-vue-jsx'
 import vueDevTools from 'vite-plugin-vue-devtools'
 
 // https://vite.dev/config/
-export default defineConfig({
-  plugins: [vue(), vueJsx(), vueDevTools()],
+export default defineConfig(({ command }) => ({
+  plugins: [vue(), vueJsx(), command === 'serve' ? vueDevTools() : null].filter(Boolean),
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
@@ -27,6 +27,62 @@ export default defineConfig({
       'axios',
       'dayjs',
     ],
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return
+
+          if (id.includes('@element-plus/icons-vue')) {
+            return 'element-icons'
+          }
+
+          if (id.includes('element-plus')) {
+            const componentMatch = id.match(/element-plus\/es\/components\/([^/]+)/)
+            if (componentMatch) {
+              const componentName = componentMatch[1]
+
+              if (
+                ['button', 'form', 'input', 'input-number', 'select', 'option', 'option-group', 'checkbox', 'radio', 'switch'].includes(
+                  componentName,
+                )
+              ) {
+                return 'ep-form'
+              }
+
+              if (
+                ['table', 'pagination', 'card', 'dialog', 'tabs', 'tag', 'avatar', 'empty', 'descriptions'].includes(
+                  componentName,
+                )
+              ) {
+                return 'ep-data'
+              }
+
+              if (['message', 'message-box', 'loading', 'icon', 'scrollbar'].includes(componentName)) {
+                return 'ep-feedback'
+              }
+
+              return `ep-${componentName}`
+            }
+
+            if (id.includes('/es/locale/')) {
+              return 'ep-locale'
+            }
+
+            return 'ep-core'
+          }
+
+          if (id.includes('vue-router') || id.includes('pinia') || id.includes('/vue/')) {
+            return 'vue-core'
+          }
+
+          if (id.includes('axios') || id.includes('dayjs')) {
+            return 'app-vendor'
+          }
+        },
+      },
+    },
   },
   server: {
     port: 5173,
@@ -53,4 +109,4 @@ export default defineConfig({
       },
     },
   },
-})
+}))

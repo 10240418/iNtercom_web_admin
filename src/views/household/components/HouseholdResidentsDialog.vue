@@ -3,6 +3,7 @@
     :model-value="visible"
     @update:model-value="$emit('update:visible', $event)"
     :title="`住户 ${householdData?.household_number || ''} 的居民管理`"
+    class="app-dialog"
     width="800px"
   >
     <div class="household-residents" v-if="householdData">
@@ -58,7 +59,7 @@
           <el-table-column prop="name" label="姓名" width="120">
             <template #default="{ row }">
               <div style="display: flex; align-items: center; gap: 8px">
-                <el-avatar :size="24" style="background: linear-gradient(135deg, #3498db, #2980b9)">
+                <el-avatar :size="24" style="background: linear-gradient(135deg, var(--c-primary), var(--c-primary-dark))">
                   <el-icon><UserFilled /></el-icon>
                 </el-avatar>
                 <span>{{ row.name }}</span>
@@ -82,9 +83,11 @@
 
           <el-table-column label="操作" width="120" fixed="right">
             <template #default="{ row }">
-              <el-button size="small" type="primary" @click="handleViewResident(row)" plain>
-                查看
-              </el-button>
+              <div class="table-op-buttons">
+                <el-button size="small" type="primary" @click="handleViewResident(row)" plain>
+                  查看
+                </el-button>
+              </div>
             </template>
           </el-table-column>
         </el-table>
@@ -96,9 +99,7 @@
     </div>
 
     <template #footer>
-      <span class="dialog-footer">
-        <el-button @click="$emit('update:visible', false)">关闭</el-button>
-      </span>
+      <el-button class="app-button app-button-secondary" @click="$emit('update:visible', false)">关闭</el-button>
     </template>
 
     <!-- 居民详情弹窗 -->
@@ -187,7 +188,7 @@ const handleViewResident = (row) => {
 
 .household-info-card,
 .residents-list-card {
-  border: 1px solid #ebeef5;
+  border: 1px solid var(--c-border);
   border-radius: 8px;
 }
 

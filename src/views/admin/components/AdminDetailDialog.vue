@@ -1,5 +1,5 @@
 <template>
-  <el-dialog v-model="dialogVisible" title="管理员详情" width="500px">
+  <el-dialog v-model="dialogVisible" title="管理员详情" width="500px" class="app-dialog">
     <div class="admin-detail">
       <el-descriptions :column="1" border>
         <el-descriptions-item label="ID">
@@ -35,10 +35,8 @@
     </div>
 
     <template #footer>
-      <span class="dialog-footer">
-        <el-button @click="handleClose">关闭</el-button>
-        <el-button type="primary" @click="handleEdit"> 编辑 </el-button>
-      </span>
+      <el-button class="app-button app-button-secondary" @click="handleClose">关闭</el-button>
+      <el-button class="app-button app-button-primary" @click="handleEdit">编辑</el-button>
     </template>
   </el-dialog>
 </template>

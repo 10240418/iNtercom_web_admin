@@ -3,6 +3,7 @@
     :model-value="visible"
     @update:model-value="$emit('update:visible', $event)"
     :title="isEdit ? '编辑住户' : '新增住户'"
+    class="app-dialog"
     width="600px"
     :before-close="handleClose"
   >
@@ -37,12 +38,10 @@
     </el-form>
 
     <template #footer>
-      <span class="dialog-footer">
-        <el-button @click="handleClose">取消</el-button>
-        <el-button type="primary" @click="handleSubmit" :loading="loading">
-          {{ isEdit ? '更新' : '创建' }}
-        </el-button>
-      </span>
+      <el-button class="app-button app-button-secondary" @click="handleClose">取消</el-button>
+      <el-button class="app-button app-button-primary" @click="handleSubmit" :loading="loading">
+        {{ isEdit ? '更新' : '创建' }}
+      </el-button>
     </template>
   </el-dialog>
 </template>

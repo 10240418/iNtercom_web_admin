@@ -6,7 +6,6 @@ import {
   OfficeBuilding,
   Monitor,
   House,
-  InfoFilled,
   ArrowRight,
   Bell,
   Setting,
@@ -266,34 +265,6 @@ const quickActions = [
             </div>
           </div>
 
-          <!-- 关于系统卡片 -->
-          <div
-            @click="navigateTo('/about')"
-            class="group bg-white/90 backdrop-blur-xl rounded-3xl border border-white/20 shadow-2xl shadow-gray-900/10 p-6 lg:p-8 cursor-pointer transition-all duration-300 hover:shadow-2xl hover:shadow-gray-900/15 hover:-translate-y-1"
-          >
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-6">
-                <div
-                  class="w-16 h-16 bg-gradient-to-br from-gray-500 to-gray-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg"
-                >
-                  <el-icon class="w-8 h-8 text-white">
-                    <InfoFilled />
-                  </el-icon>
-                </div>
-                <div>
-                  <h3 class="text-lg font-bold text-gray-900 group-hover:text-gray-800">
-                    关于系统
-                  </h3>
-                  <p class="text-sm text-gray-600 mt-1">系统信息和帮助文档</p>
-                </div>
-              </div>
-              <el-icon
-                class="w-6 h-6 text-gray-400 group-hover:text-gray-600 group-hover:translate-x-1 transition-all duration-200"
-              >
-                <ArrowRight />
-              </el-icon>
-            </div>
-          </div>
         </div>
 
         <!-- 右侧：系统概览 -->

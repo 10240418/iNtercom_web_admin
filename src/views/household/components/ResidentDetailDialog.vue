@@ -3,6 +3,7 @@
     :model-value="visible"
     @update:model-value="$emit('update:visible', $event)"
     title="居民详情"
+    class="app-dialog"
     width="600px"
   >
     <div class="resident-detail" v-if="residentData">
@@ -38,9 +39,7 @@
     </div>
 
     <template #footer>
-      <span class="dialog-footer">
-        <el-button @click="$emit('update:visible', false)">关闭</el-button>
-      </span>
+      <el-button class="app-button app-button-secondary" @click="$emit('update:visible', false)">关闭</el-button>
     </template>
   </el-dialog>
 </template>

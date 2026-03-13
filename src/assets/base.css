@@ -50,6 +50,88 @@
   }
 }
 
+/* =============================================================
+   iNtercom 多主题系统
+   通过在 <html> 上设置 data-theme 属性切换主题，由路由守卫自动完成。
+   语义化 token（--c-*）供 Tailwind 工具类和组件直接引用。
+   ============================================================= */
+
+/* ---------- 全局默认值（fallback，避免未命中时空值）---------- */
+:root {
+  /* 主色 */
+  --c-primary:       #3b82f6;  /* blue-500  */
+  --c-primary-light: #93c5fd;  /* blue-300  */
+  --c-primary-dark:  #1d4ed8;  /* blue-700  */
+  --c-primary-bg:    #eff6ff;  /* blue-50   */
+
+  /* 功能色（全局固定，不随主题变化） */
+  --c-success: #22c55e;
+  --c-warning: #f59e0b;
+  --c-danger:  #ef4444;
+  --c-info:    #6366f1;
+
+  /* 布局骨架 */
+  --c-sidebar-bg:     #1e293b;  /* slate-800 */
+  --c-sidebar-text:   #cbd5e1;  /* slate-300 */
+  --c-sidebar-active: #3b82f6;
+  --c-header-bg:      #ffffff;
+  --c-page-bg:        #f1f5f9;  /* slate-100 */
+  --c-card-bg:        #ffffff;
+
+  /* 文字 */
+  --c-text-primary:   #1e293b;  /* slate-800 */
+  --c-text-secondary: #64748b;  /* slate-500 */
+  --c-text-muted:     #94a3b8;  /* slate-400 */
+  --c-border:         #e2e8f0;  /* slate-200 */
+
+  /* Element Plus 主色同步 */
+  --el-color-primary: var(--c-primary);
+}
+
+/* =====  主题 default — 蓝色（仪表盘 / 管理员 / 关于）===== */
+[data-theme='default'] {
+  --c-primary:        #3b82f6;
+  --c-primary-light:  #93c5fd;
+  --c-primary-dark:   #1d4ed8;
+  --c-primary-bg:     #eff6ff;
+  --c-sidebar-active: #3b82f6;
+  --el-color-primary: #3b82f6;
+}
+
+/* =====  主题 property — 青绿色（楼栋 / 住户管理）===== */
+[data-theme='property'] {
+  --c-primary:        #10b981;
+  --c-primary-light:  #6ee7b7;
+  --c-primary-dark:   #047857;
+  --c-primary-bg:     #ecfdf5;
+  --c-sidebar-active: #10b981;
+  --c-page-bg:        #f0fdf4;
+  --el-color-primary: #10b981;
+}
+
+/* =====  主题 device — 琥珀橙（设备管理 / 通话测试）===== */
+[data-theme='device'] {
+  --c-primary:        #f59e0b;
+  --c-primary-light:  #fcd34d;
+  --c-primary-dark:   #b45309;
+  --c-primary-bg:     #fffbeb;
+  --c-sidebar-active: #f59e0b;
+  --c-page-bg:        #fefce8;
+  --el-color-primary: #f59e0b;
+}
+
+/* =====  主题 auth — 靛紫色（登录页）===== */
+[data-theme='auth'] {
+  --c-primary:        #6366f1;
+  --c-primary-light:  #a5b4fc;
+  --c-primary-dark:   #4338ca;
+  --c-primary-bg:     #eef2ff;
+  --c-sidebar-active: #6366f1;
+  --c-page-bg:        #f0f4ff;
+  --c-sidebar-bg:     #312e81;
+  --el-color-primary: #6366f1;
+}
+
 *,
 *::before,
 *::after {

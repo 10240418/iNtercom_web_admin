@@ -1,74 +1,49 @@
 <template>
-  <div class="device-list-container">
-    <!-- 页面标题 -->
-    <div class="page-header">
-      <h1>设备管理</h1>
-      <p>管理门禁设备信息、状态监控和关联配置</p>
-    </div>
-
-    <!-- 搜索和操作栏 -->
-    <div class="toolbar">
-      <div class="search-section">
-        <el-select
-          v-model="buildingFilter"
-          placeholder="选择楼栋筛选"
-          style="width: 200px; margin-right: 12px"
-          clearable
-          @change="handleSearch"
-        >
-          <el-option
-            v-for="building in buildingOptions"
-            :key="building.id"
-            :label="building.building_name"
-            :value="building.id"
-          />
-        </el-select>
-
-        <el-input
-          v-model="searchKeyword"
-          placeholder="搜索设备名称、序列号、位置"
-          style="width: 300px"
-          clearable
-          @clear="handleSearch"
-          @keyup.enter="handleSearch"
-        >
-          <template #prefix>
-            <el-icon>
-              <Search />
-            </el-icon>
-          </template>
-        </el-input>
-        <el-button
-          type="primary"
-          @click="handleSearch"
-          :loading="loading"
-        > 搜索 </el-button>
-      </div>
-
-      <div class="action-section">
-        <el-button
-          type="primary"
-          @click="handleAdd"
-          :icon="Plus"
-        > 新增设备 </el-button>
-        <el-button
-          type="danger"
-          :disabled="selectedIds.length === 0"
-          @click="handleBatchDelete"
-          :icon="Delete"
-        >
-          批量删除
-        </el-button>
+  <div class="device-list-container app-page">
+    <div class="page-header app-page-header">
+      <div class="header-content app-page-header-content">
+        <div class="title-section app-page-heading">
+          <h1>
+            <el-icon class="title-icon app-title-icon"><Monitor /></el-icon>
+            设备管理
+          </h1>
+          <p>管理门禁设备信息、状态监控和关联配置</p>
+        </div>
       </div>
     </div>
 
-    <!-- 设备列表表格 -->
-    <el-table
-      v-loading="loading"
-      :data="deviceList"
-      style="width: 100%"
-      @selection-change="handleSelectionChange"
-    >
+    <div class="toolbar app-toolbar">
+      <TableActionButtons
+        add-label="新增设备"
+        delete-label="批量删除"
+        :selected-count="selectedIds.length"
+        :add-icon="Plus"
+        :delete-icon="Delete"
+        @add="handleAdd"
+        @batch-delete="handleBatchDelete"
+      />
+    </div>
+
+    <el-card class="table-card app-table-card" shadow="never">
+      <template #header>
+        <ListCardHeader
+          title="设备列表"
+          :summary="`共 ${pagination.total} 条记录`"
+          :show-refresh="true"
+          :refresh-loading="loading"
+          @refresh="getDeviceList"
+        />
+      </template>
+
+      <el-table
+        v-loading="loading"
+        :data="deviceList"
+        style="width: 100%"
+        @selection-change="handleSelectionChange"
+        table-layout="fixed"
+        stripe
+        :header-cell-style="{ background: 'var(--c-primary-bg)', color: 'var(--c-text-secondary)' }"
+      >
       <el-table-column
         type="selection"
         width="55"
@@ -94,6 +69,7 @@
         prop="serial_number"
         label="序列号"
         min-width="140"
+        show-overflow-tooltip
       >
         <template #default="{ row }">
           <el-tag>{{ row.serial_number }}</el-tag>
@@ -104,6 +80,7 @@
         prop="location"
         label="位置"
         min-width="120"
+        show-overflow-tooltip
       />
 
       <el-table-column
@@ -141,6 +118,7 @@
         prop="updated_at"
         label="最后更新"
         min-width="170"
+        show-overflow-tooltip
       >
         <template #default="{ row }">
           {{ formatDateTime(row.updated_at) }}
@@ -153,51 +131,49 @@
         width="280"
       >
         <template #default="{ row }">
-          <el-button
-            size="small"
-            @click="handleView(row)"
-            :icon="View"
-          > 查看 </el-button>
-          <el-button
-            size="small"
-            type="primary"
-            @click="handleEdit(row)"
-            :icon="Edit"
-          >
-            编辑
-          </el-button>
-          <el-button
-            size="small"
-            type="warning"
-            @click="handleHealthCheck(row)"
-            :icon="Warning"
-          >
-            检测
-          </el-button>
-          <el-button
-            size="small"
-            type="danger"
-            @click="handleDelete(row)"
-            :icon="Delete"
-          >
-            删除
-          </el-button>
+          <div class="table-op-buttons">
+            <el-button
+              size="small"
+              @click="handleView(row)"
+              :icon="View"
+            > 查看 </el-button>
+            <el-button
+              size="small"
+              type="primary"
+              @click="handleEdit(row)"
+              :icon="Edit"
+            >
+              编辑
+            </el-button>
+            <el-button
+              size="small"
+              type="warning"
+              @click="handleHealthCheck(row)"
+              :icon="Warning"
+            >
+              检测
+            </el-button>
+            <el-button
+              size="small"
+              type="danger"
+              @click="handleDelete(row)"
+              :icon="Delete"
+            >
+              删除
+            </el-button>
+          </div>
         </template>
       </el-table-column>
-    </el-table>
+      </el-table>
+    </el-card>
 
-    <!-- 分页组件 -->
-    <div class="pagination-container">
-      <el-pagination
-        v-model:current-page="pagination.page"
-        v-model:page-size="pagination.pageSize"
-        :page-sizes="[10, 20, 50, 100]"
-        :total="pagination.total"
-        layout="total, sizes, prev, pager, next, jumper"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
-    </div>
+    <TablePagination
+      v-model:current-page="pagination.page"
+      v-model:page-size="pagination.pageSize"
+      :total="pagination.total"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+    />
 
     <!-- 新增/编辑弹窗 -->
     <DeviceFormDialog
@@ -218,26 +194,20 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Search, Plus, Delete, Edit, View, Warning } from '@element-plus/icons-vue'
+import { Plus, Delete, Edit, View, Warning, Monitor } from '@element-plus/icons-vue'
 import { deviceAPI } from '@/api/device.js'
-import { buildingAPI } from '@/api/building.js'
 import { formatDateTime } from '@/utils/index.js'
 import { DEVICE_STATUS_LABELS, DEVICE_STATUS_COLORS } from '@/constants/index.js'
+import { TableActionButtons, TablePagination } from '@/components/table'
+import ListCardHeader from '@/page/button/ListCardHeader.vue'
 import DeviceFormDialog from './components/DeviceFormDialog.vue'
 import DeviceDetailDialog from './components/DeviceDetailDialog.vue'
-
-// 搜索关键词
-const searchKeyword = ref('')
-const buildingFilter = ref('')
 
 // 加载状态
 const loading = ref(false)
 
 // 设备列表
 const deviceList = ref([])
-
-// 楼栋选项
-const buildingOptions = ref([])
 
 // 选中的行
 const selectedIds = ref([])
@@ -256,18 +226,6 @@ const isEdit = ref(false)
 const currentDevice = ref({})
 
 /**
- * 获取楼栋选项
- */
-const getBuildingOptions = async () => {
-  try {
-    const response = await buildingAPI.getBuildingList({ page_size: 1000 })
-    buildingOptions.value = response.data || []
-  } catch (error) {
-    console.error('获取楼栋选项失败:', error)
-  }
-}
-
-/**
  * 获取设备列表
  */
 const getDeviceList = async () => {
@@ -276,8 +234,6 @@ const getDeviceList = async () => {
     const params = {
       page: pagination.page,
       page_size: pagination.pageSize,
-      search: searchKeyword.value || undefined,
-      building_id: buildingFilter.value || undefined,
     }
 
     const response = await deviceAPI.getDeviceList(params)
@@ -288,14 +244,6 @@ const getDeviceList = async () => {
   } finally {
     loading.value = false
   }
-}
-
-/**
- * 搜索
- */
-const handleSearch = () => {
-  pagination.page = 1
-  getDeviceList()
 }
 
 /**
@@ -457,65 +405,26 @@ const getStatusTagType = (status) => {
 
 // 组件挂载时获取数据
 onMounted(() => {
-  getBuildingOptions()
   getDeviceList()
 })
 </script>
 
 <style scoped>
 .device-list-container {
-  padding: 20px;
-}
-
-.page-header {
-  margin-bottom: 20px;
-}
-
-.page-header h1 {
-  font-size: 24px;
-  font-weight: bold;
-  color: #333;
-  margin: 0 0 8px 0;
-}
-
-.page-header p {
-  color: #666;
-  margin: 0;
+  padding: 24px;
 }
 
 .toolbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   margin-bottom: 20px;
-  padding: 16px;
-  background: #f5f5f5;
-  border-radius: 8px;
-}
-
-.search-section {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-.action-section {
-  display: flex;
-  gap: 12px;
-}
-
-.pagination-container {
-  margin-top: 20px;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.el-table {
-  border-radius: 8px;
-  overflow: hidden;
 }
 
 .text-gray {
-  color: #999;
+  color: var(--c-text-muted);
+}
+
+@media (max-width: 768px) {
+  .device-list-container {
+    padding: 16px;
+  }
 }
 </style>

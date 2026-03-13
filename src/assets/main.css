@@ -4,4 +4,345 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+	html,
+	body,
+	#app {
+		min-height: 100%;
+	}
+}
+
+@layer components {
+	.app-page {
+		@apply min-h-full rounded-3xl border p-5 md:p-6;
+		background: var(--c-page-bg);
+		border-color: var(--c-border);
+	}
+
+	.app-surface {
+		@apply rounded-2xl border shadow-sm;
+		background: var(--c-card-bg);
+		border-color: var(--c-border);
+	}
+
+	.app-toolbar {
+		@apply flex flex-col gap-4 rounded-2xl border p-4 lg:flex-row lg:items-center lg:justify-between;
+		background: var(--c-card-bg);
+		border-color: var(--c-border);
+	}
+
+	.app-page-header {
+		@apply mb-6;
+	}
+
+	.app-page-header-content {
+		@apply flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between;
+	}
+
+	.app-page-heading {
+		@apply min-w-0;
+	}
+
+	.app-page-heading h1 {
+		@apply flex items-center gap-3 text-2xl font-semibold tracking-tight md:text-[28px];
+		color: var(--c-text-primary);
+	}
+
+	.app-page-heading p {
+		@apply mt-2 text-sm;
+		color: var(--c-text-secondary);
+	}
+
+	.app-title-icon {
+		color: var(--c-primary);
+		font-size: 30px;
+	}
+
+	.app-table-card {
+		@apply overflow-hidden rounded-2xl border shadow-sm;
+		background: var(--c-card-bg);
+		border-color: var(--c-border);
+		box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+	}
+
+	.app-pagination-bar {
+		@apply mt-5 flex justify-end rounded-2xl border px-5 py-4;
+		background: var(--c-card-bg);
+		border-color: var(--c-border);
+		box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+	}
+
+	.app-title {
+		color: var(--c-text-primary);
+		@apply text-2xl font-semibold tracking-tight;
+	}
+
+	.app-subtitle {
+		color: var(--c-text-secondary);
+		@apply mt-1 text-sm;
+	}
+
+	.app-stat-card {
+		@apply rounded-2xl border p-5 text-white shadow-sm;
+		border-color: transparent;
+		background: linear-gradient(135deg, var(--c-primary), var(--c-primary-dark));
+	}
+
+	.app-code-block {
+		@apply rounded-xl p-3 font-mono text-xs;
+		background: #0f172a;
+		color: #e2e8f0;
+	}
+
+	.app-dialog-card {
+		@apply rounded-2xl border shadow-sm;
+		background: var(--c-card-bg);
+		border-color: var(--c-border);
+	}
+
+	.app-panel-title {
+		@apply text-base font-semibold;
+		color: var(--c-text-primary);
+	}
+
+	.app-inline-card {
+		@apply rounded-xl border p-3;
+		background: var(--c-page-bg);
+		border-color: var(--c-border);
+	}
+
+	.app-link-card {
+		@apply rounded-2xl border px-4 py-3 text-left transition duration-200;
+		background: var(--c-page-bg);
+		border-color: var(--c-border);
+	}
+
+	.app-link-card:hover {
+		border-color: color-mix(in srgb, var(--c-primary) 65%, var(--c-border));
+		background: color-mix(in srgb, var(--c-primary-bg) 65%, var(--c-card-bg));
+		transform: translateY(-1px);
+	}
+
+	.app-action-row {
+		@apply mt-4 flex flex-wrap gap-2;
+	}
+
+	.table-op-buttons {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		flex-wrap: nowrap !important;
+		white-space: nowrap;
+		overflow-x: auto;
+		overflow-y: hidden;
+	}
+
+	.table-op-buttons .el-button {
+		flex: 0 0 auto;
+		white-space: nowrap;
+		margin-left: 0 !important;
+	}
+
+	.app-button,
+	.el-button.app-button {
+		border-radius: 12px;
+		padding: 10px 18px;
+		font-weight: 500;
+		transition: all 0.2s ease;
+	}
+
+	.app-button:hover,
+	.el-button.app-button:hover {
+		transform: translateY(-1px);
+	}
+
+	.app-button-primary,
+	.el-button.app-button-primary {
+		color: #fff;
+		border: none;
+		background: linear-gradient(135deg, var(--c-primary), var(--c-primary-dark));
+		box-shadow: 0 8px 20px color-mix(in srgb, var(--c-primary) 26%, transparent);
+	}
+
+	.app-button-success,
+	.el-button.app-button-success {
+		color: #fff;
+		border: none;
+		background: linear-gradient(135deg, var(--c-success), #15803d);
+		box-shadow: 0 8px 20px color-mix(in srgb, var(--c-success) 24%, transparent);
+	}
+
+	.app-button-warning,
+	.el-button.app-button-warning {
+		color: #fff;
+		border: none;
+		background: linear-gradient(135deg, var(--c-warning), #b45309);
+		box-shadow: 0 8px 20px color-mix(in srgb, var(--c-warning) 24%, transparent);
+	}
+
+	.app-button-danger,
+	.el-button.app-button-danger {
+		color: #fff;
+		border: none;
+		background: linear-gradient(135deg, var(--c-danger), #b91c1c);
+		box-shadow: 0 8px 20px color-mix(in srgb, var(--c-danger) 22%, transparent);
+	}
+
+	.app-button-secondary,
+	.el-button.app-button-secondary {
+		color: var(--c-text-primary);
+		background: var(--c-card-bg);
+		border: 1px solid var(--c-border);
+	}
+
+	.app-button-ghost,
+	.el-button.app-button-ghost {
+		color: var(--c-primary);
+		background: var(--c-primary-bg);
+		border: 1px solid color-mix(in srgb, var(--c-primary) 18%, var(--c-border));
+	}
+
+	.app-dialog-section-title {
+		@apply mb-4 text-sm font-semibold;
+		color: var(--c-text-primary);
+	}
+
+	.app-dialog-hint {
+		@apply mt-1 text-xs;
+		color: var(--c-text-secondary);
+	}
+}
+
+@layer base {
+	.el-card,
+	.el-table,
+	.el-tabs__nav-wrap,
+	.el-tabs__item,
+	.el-input__wrapper,
+	.el-textarea__inner,
+	.el-select__wrapper {
+		--el-border-color: var(--c-border);
+	}
+
+	.el-dialog.app-dialog {
+		background: var(--c-card-bg);
+		border: 1px solid var(--c-border);
+		border-radius: 24px;
+		box-shadow: 0 24px 64px rgba(15, 23, 42, 0.14);
+	}
+
+	.el-dialog.app-dialog .el-dialog__header {
+		margin-right: 0;
+		padding: 20px 24px 12px;
+		border-bottom: 1px solid var(--c-border);
+	}
+
+	.el-dialog.app-dialog .el-dialog__title {
+		color: var(--c-text-primary);
+		font-size: 18px;
+		font-weight: 600;
+	}
+
+	.el-dialog.app-dialog .el-dialog__body {
+		padding: 20px 24px;
+		color: var(--c-text-primary);
+		background: var(--c-card-bg);
+	}
+
+	.el-dialog.app-dialog .el-dialog__footer {
+		display: flex;
+		justify-content: flex-end;
+		align-items: center;
+		gap: 8px;
+		padding: 12px 24px 20px;
+		border-top: 1px solid var(--c-border);
+	}
+
+	/* 兼容有 span.dialog-footer 包裹的旧写法 */
+	.el-dialog.app-dialog .dialog-footer {
+		display: contents;
+	}
+
+	.el-dialog.app-dialog .el-descriptions__body .el-descriptions__table {
+		--el-descriptions-table-border: var(--c-border);
+	}
+
+	.el-dialog.app-dialog .el-descriptions__label {
+		color: var(--c-text-secondary);
+		background: var(--c-primary-bg);
+	}
+
+	.el-dialog.app-dialog .el-descriptions__content {
+		color: var(--c-text-primary);
+		background: var(--c-card-bg);
+	}
+
+	.el-dialog.app-dialog .el-card {
+		border-color: var(--c-border);
+		background: var(--c-card-bg);
+	}
+
+	.el-dialog.app-dialog .el-card__header {
+		color: var(--c-text-primary);
+		background: var(--c-primary-bg);
+		border-bottom-color: var(--c-border);
+	}
+
+	.el-dialog.app-dialog .el-table th.el-table__cell {
+		background: var(--c-primary-bg);
+		color: var(--c-text-secondary);
+	}
+
+	.el-dialog.app-dialog .el-empty__description p {
+		color: var(--c-text-secondary);
+	}
+
+	.app-table-card .el-card__body {
+		padding: 0;
+	}
+
+	.app-table-card .el-card__header {
+		padding: 16px 20px;
+		border-bottom: 1px solid var(--c-border);
+		background: color-mix(in srgb, var(--c-primary-bg) 55%, var(--c-card-bg));
+	}
+
+	.app-table-card .el-table th.el-table__cell {
+		background: var(--c-primary-bg);
+		color: var(--c-text-secondary);
+		font-weight: 600;
+	}
+
+	.app-table-card .el-table {
+		table-layout: fixed;
+	}
+
+	.app-table-card .el-table .cell {
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.app-table-card .el-table td.el-table__cell {
+		padding-top: 16px;
+		padding-bottom: 16px;
+	}
+
+	.app-pagination-bar .el-pagination {
+		gap: 8px;
+	}
+
+	.app-pagination-bar .el-pagination .el-pager li {
+		border-radius: 6px;
+		transition: all 0.3s ease;
+	}
+
+	.app-pagination-bar .el-pagination .el-pager li:hover {
+		transform: translateY(-1px);
+	}
+
+	.el-button.app-button.is-plain {
+		background: var(--c-card-bg);
+	}
+}
+
 /* 移除限制性的布局规则，让页面组件自行控制布局 */

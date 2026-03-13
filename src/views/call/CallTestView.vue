@@ -264,18 +264,18 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="space-y-5">
-    <div class="rounded-xl border border-slate-200 bg-white p-5">
-      <h2 class="text-lg font-semibold">通话流程测试台</h2>
-      <p class="mt-1 text-sm text-slate-500">
+  <div class="app-page space-y-5">
+    <div class="app-surface p-5">
+      <h2 class="app-panel-title text-lg">通话流程测试台</h2>
+      <p class="mt-1 text-sm text-text-secondary">
         在页面内直接执行 MQTT 通话流程测试，无需切换 MQTTX 做基础流程验证。
       </p>
     </div>
 
     <div class="grid grid-cols-1 gap-5 xl:grid-cols-3">
       <section class="space-y-5 xl:col-span-2">
-        <div class="rounded-xl border border-slate-200 bg-white p-5">
-          <h3 class="text-base font-semibold">测试参数</h3>
+        <div class="app-surface p-5">
+          <h3 class="app-panel-title">测试参数</h3>
           <div class="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
             <el-select
               v-model="form.deviceId"
@@ -341,51 +341,56 @@ onMounted(() => {
             </el-select>
           </div>
 
-          <div class="mt-4 flex flex-wrap gap-2">
+          <div class="app-action-row">
             <el-button
               type="primary"
+              class="app-button app-button-primary"
               :loading="loading"
               @click="initiateCall"
             >发起通话</el-button>
             <el-button
+              class="app-button app-button-secondary"
               :loading="loading"
               @click="fetchSession"
             >查询会话</el-button>
             <el-button
               type="warning"
+              class="app-button app-button-warning"
               :loading="loading"
               @click="postCallerAction"
             >呼叫方动作</el-button>
             <el-button
               type="warning"
               plain
+              class="app-button app-button-ghost"
               :loading="loading"
               @click="postCalleeAction"
             >被叫方动作</el-button>
             <el-button
               type="danger"
+              class="app-button app-button-danger"
               :loading="loading"
               @click="endSession"
             >结束会话</el-button>
           </div>
         </div>
 
-        <div class="rounded-xl border border-slate-200 bg-white p-5">
-          <h3 class="text-base font-semibold">通信信息卡片</h3>
+        <div class="app-surface p-5">
+          <h3 class="app-panel-title">通信信息卡片</h3>
           <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
-            <div class="rounded-lg border border-slate-200 p-3">
-              <p class="text-xs text-slate-500">当前 call_id</p>
-              <p class="mt-1 break-all font-mono text-sm">
+            <div class="app-inline-card">
+              <p class="text-xs text-text-secondary">当前 call_id</p>
+              <p class="mt-1 break-all font-mono text-sm text-text-primary">
                 {{ form.callId || '-' }}</p>
             </div>
-            <div class="rounded-lg border border-slate-200 p-3">
-              <p class="text-xs text-slate-500">会话状态</p>
-              <p class="mt-1 text-sm font-medium">
+            <div class="app-inline-card">
+              <p class="text-xs text-text-secondary">会话状态</p>
+              <p class="mt-1 text-sm font-medium text-text-primary">
                 {{ sessionInfo?.status || '-' }}</p>
             </div>
-            <div class="rounded-lg border border-slate-200 p-3 md:col-span-2">
-              <p class="text-xs text-slate-500">MQTT 主题提示（用于核对流程）</p>
-              <ul class="mt-2 space-y-1 font-mono text-xs text-slate-700">
+            <div class="app-inline-card md:col-span-2">
+              <p class="text-xs text-text-secondary">MQTT 主题提示（用于核对流程）</p>
+              <ul class="mt-2 space-y-1 font-mono text-xs text-text-primary">
                 <li
                   v-for="topic in mqttTopicHints"
                   :key="topic"
@@ -395,8 +400,8 @@ onMounted(() => {
           </div>
         </div>
 
-        <div class="rounded-xl border border-slate-200 bg-white p-5">
-          <h3 class="text-base font-semibold">附加测试：设备状态与系统消息</h3>
+        <div class="app-surface p-5">
+          <h3 class="app-panel-title">附加测试：设备状态与系统消息</h3>
           <div class="mt-4 grid grid-cols-1 gap-3 md:grid-cols-3">
             <el-switch
               v-model="statusForm.online"
@@ -415,9 +420,10 @@ onMounted(() => {
               placeholder="固件版本"
             />
           </div>
-          <div class="mt-3 flex flex-wrap gap-2">
+          <div class="app-action-row mt-3">
             <el-button
               type="success"
+              class="app-button app-button-success"
               :loading="loading"
               @click="publishDeviceStatus"
             >发布设备状态</el-button>
@@ -450,10 +456,11 @@ onMounted(() => {
               placeholder="消息内容"
             />
           </div>
-          <div class="mt-3">
+          <div class="app-action-row mt-3">
             <el-button
               type="success"
               plain
+              class="app-button app-button-ghost"
               :loading="loading"
               @click="publishSystemMessage"
             >发布系统消息</el-button>
@@ -462,26 +469,26 @@ onMounted(() => {
       </section>
 
       <section class="space-y-5">
-        <div class="rounded-xl border border-slate-200 bg-white p-5">
-          <h3 class="text-base font-semibold">最后响应</h3>
+        <div class="app-surface p-5">
+          <h3 class="app-panel-title">最后响应</h3>
           <pre
-            class="mt-3 max-h-80 overflow-auto rounded bg-slate-900 p-3 text-xs text-slate-100"
+            class="app-code-block mt-3 max-h-80 overflow-auto"
           >{{
 JSON.stringify(lastResponse, null, 2)
           }}</pre>
         </div>
 
-        <div class="rounded-xl border border-slate-200 bg-white p-5">
-          <h3 class="text-base font-semibold">操作日志</h3>
+        <div class="app-surface p-5">
+          <h3 class="app-panel-title">操作日志</h3>
           <ul class="mt-3 max-h-80 space-y-2 overflow-auto">
             <li
               v-for="(item, idx) in logs"
               :key="`${item.time}-${idx}`"
-              class="rounded border border-slate-200 p-2"
+              class="app-inline-card p-2"
             >
-              <p class="text-xs text-slate-500">{{ item.time }}</p>
-              <p class="text-sm font-medium">{{ item.title }}</p>
-              <p class="text-xs text-slate-600">{{ item.detail }}</p>
+              <p class="text-xs text-text-secondary">{{ item.time }}</p>
+              <p class="text-sm font-medium text-text-primary">{{ item.title }}</p>
+              <p class="text-xs text-text-secondary">{{ item.detail }}</p>
             </li>
           </ul>
         </div>
