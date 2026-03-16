@@ -30,7 +30,7 @@ export const useStaffStore = defineStore('staff', {
         const response = await staffAPI.getStaffList(queryParams)
         const responseData = response.data
 
-        this.staffList = responseData.data || []
+        this.staffList = Array.isArray(responseData.data) ? responseData.data : (responseData.data?.data || [])
         this.pagination = {
           page: responseData.page || 1,
           pageSize: responseData.page_size || 10,

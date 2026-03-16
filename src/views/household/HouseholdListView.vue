@@ -63,7 +63,7 @@
 
             <el-table-column prop="household_number" label="住户号" min-width="140" show-overflow-tooltip />
 
-            <el-table-column prop="building_id" label="所属楼栋" min-width="140" show-overflow-tooltip>
+            <el-table-column prop="building_id" label="所属楼栋" min-width="120" show-overflow-tooltip>
               <template #default="{ row }">{{ getBuildingName(row.building_id) }}</template>
             </el-table-column>
 
@@ -79,11 +79,11 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="created_at" label="创建时间" min-width="180" show-overflow-tooltip>
+            <el-table-column prop="created_at" label="创建时间" min-width="160" show-overflow-tooltip>
               <template #default="{ row }">{{ formatDateTime(row.created_at) }}</template>
             </el-table-column>
 
-            <el-table-column label="操作" fixed="right" width="280">
+            <el-table-column label="操作" fixed="right" width="340">
               <template #default="{ row }">
                 <div class="action-buttons table-op-buttons">
                   <el-button
@@ -177,17 +177,17 @@
 
             <el-table-column prop="email" label="邮箱" min-width="180" show-overflow-tooltip />
 
-            <el-table-column prop="household_id" label="所属住户" min-width="120">
+            <el-table-column prop="household_id" label="所属住户" min-width="100">
               <template #default="{ row }">
                 <el-tag type="primary">{{ getHouseholdNumber(row.household_id) }}</el-tag>
               </template>
             </el-table-column>
 
-            <el-table-column prop="created_at" label="创建时间" min-width="180" show-overflow-tooltip>
+            <el-table-column prop="created_at" label="创建时间" min-width="160" show-overflow-tooltip>
               <template #default="{ row }">{{ formatDateTime(row.created_at) }}</template>
             </el-table-column>
 
-            <el-table-column label="操作" fixed="right" width="200">
+            <el-table-column label="操作" fixed="right" width="260">
               <template #default="{ row }">
                 <div class="action-buttons table-op-buttons">
                   <el-button

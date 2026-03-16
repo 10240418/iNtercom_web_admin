@@ -72,7 +72,7 @@ const router = createRouter({
           meta: {
             title: '住户管理',
             requiresAuth: true,
-            showInNav: false,
+            showInNav: true,
             icon: 'household',
             theme: 'default',
           },

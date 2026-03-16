@@ -100,7 +100,7 @@ export const useHouseholdStore = defineStore('household', {
         const response = await householdAPI.getHouseholdList(queryParams)
         const responseData = response.data
 
-        this.householdList = responseData.data || []
+        this.householdList = Array.isArray(responseData.data) ? responseData.data : (responseData.data?.data || [])
 
         // 更新分页信息
         this.pagination = {
@@ -138,7 +138,7 @@ export const useHouseholdStore = defineStore('household', {
         const response = await residentAPI.getResidentList(queryParams)
         const responseData = response.data
 
-        this.residentList = responseData.data || []
+        this.residentList = Array.isArray(responseData.data) ? responseData.data : (responseData.data?.data || [])
 
         // 更新居民分页信息
         this.residentPagination = {

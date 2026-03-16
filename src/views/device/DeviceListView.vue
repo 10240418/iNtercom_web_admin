@@ -4,7 +4,9 @@
       <div class="header-content app-page-header-content">
         <div class="title-section app-page-heading">
           <h1>
-            <el-icon class="title-icon app-title-icon"><Monitor /></el-icon>
+            <el-icon class="title-icon app-title-icon">
+              <Monitor />
+            </el-icon>
             设备管理
           </h1>
           <p>管理门禁设备信息、状态监控和关联配置</p>
@@ -24,7 +26,10 @@
       />
     </div>
 
-    <el-card class="table-card app-table-card" shadow="never">
+    <el-card
+      class="table-card app-table-card"
+      shadow="never"
+    >
       <template #header>
         <ListCardHeader
           title="设备列表"
@@ -44,126 +49,126 @@
         stripe
         :header-cell-style="{ background: 'var(--c-primary-bg)', color: 'var(--c-text-secondary)' }"
       >
-      <el-table-column
-        type="selection"
-        width="55"
-      />
+        <el-table-column
+          type="selection"
+          width="55"
+        />
 
-      <el-table-column
-        prop="id"
-        label="ID"
-        width="80"
-      />
+        <el-table-column
+          prop="id"
+          label="ID"
+          width="80"
+        />
 
-      <el-table-column
-        prop="name"
-        label="设备名称"
-        min-width="120"
-      >
-        <template #default="{ row }">
-          <el-tag type="primary">{{ row.name }}</el-tag>
-        </template>
-      </el-table-column>
+        <el-table-column
+          prop="name"
+          label="设备名称"
+          min-width="120"
+        >
+          <template #default="{ row }">
+            <el-tag type="primary">{{ row.name }}</el-tag>
+          </template>
+        </el-table-column>
 
-      <el-table-column
-        prop="serial_number"
-        label="序列号"
-        min-width="140"
-        show-overflow-tooltip
-      >
-        <template #default="{ row }">
-          <el-tag>{{ row.serial_number }}</el-tag>
-        </template>
-      </el-table-column>
+        <el-table-column
+          prop="serial_number"
+          label="序列号"
+          min-width="140"
+          show-overflow-tooltip
+        >
+          <template #default="{ row }">
+            <el-tag>{{ row.serial_number }}</el-tag>
+          </template>
+        </el-table-column>
 
-      <el-table-column
-        prop="location"
-        label="位置"
-        min-width="120"
-        show-overflow-tooltip
-      />
+        <el-table-column
+          prop="location"
+          label="位置"
+          min-width="120"
+          show-overflow-tooltip
+        />
 
-      <el-table-column
-        prop="building"
-        label="所属楼栋"
-        min-width="120"
-      >
-        <template #default="{ row }">
-          <el-tag
-            v-if="row.building"
-            type="info"
-          >
-            {{ row.building.building_name }}
-          </el-tag>
-          <span
-            v-else
-            class="text-gray"
-          >未分配</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column
-        prop="status"
-        label="设备状态"
-        min-width="100"
-      >
-        <template #default="{ row }">
-          <el-tag :type="getStatusTagType(row.status)">
-            {{ getStatusLabel(row.status) }}
-          </el-tag>
-        </template>
-      </el-table-column>
-
-      <el-table-column
-        prop="updated_at"
-        label="最后更新"
-        min-width="170"
-        show-overflow-tooltip
-      >
-        <template #default="{ row }">
-          {{ formatDateTime(row.updated_at) }}
-        </template>
-      </el-table-column>
-
-      <el-table-column
-        label="操作"
-        fixed="right"
-        width="280"
-      >
-        <template #default="{ row }">
-          <div class="table-op-buttons">
-            <el-button
-              size="small"
-              @click="handleView(row)"
-              :icon="View"
-            > 查看 </el-button>
-            <el-button
-              size="small"
-              type="primary"
-              @click="handleEdit(row)"
-              :icon="Edit"
+        <el-table-column
+          prop="building"
+          label="所属楼栋"
+          min-width="120"
+        >
+          <template #default="{ row }">
+            <el-tag
+              v-if="row.building"
+              type="info"
             >
-              编辑
-            </el-button>
-            <el-button
-              size="small"
-              type="warning"
-              @click="handleHealthCheck(row)"
-              :icon="Warning"
-            >
-              检测
-            </el-button>
-            <el-button
-              size="small"
-              type="danger"
-              @click="handleDelete(row)"
-              :icon="Delete"
-            >
-              删除
-            </el-button>
-          </div>
-        </template>
-      </el-table-column>
+              {{ row.building.building_name }}
+            </el-tag>
+            <span
+              v-else
+              class="text-gray"
+            >未分配</span>
+          </template>
+        </el-table-column>
+
+        <el-table-column
+          prop="status"
+          label="设备状态"
+          min-width="100"
+        >
+          <template #default="{ row }">
+            <el-tag :type="getStatusTagType(row.status)">
+              {{ getStatusLabel(row.status) }}
+            </el-tag>
+          </template>
+        </el-table-column>
+
+        <el-table-column
+          prop="updated_at"
+          label="最后更新"
+          min-width="170"
+          show-overflow-tooltip
+        >
+          <template #default="{ row }">
+            {{ formatDateTime(row.updated_at) }}
+          </template>
+        </el-table-column>
+
+        <el-table-column
+          label="操作"
+          fixed="right"
+          width="280"
+        >
+          <template #default="{ row }">
+            <div class="table-op-buttons">
+              <el-button
+                size="small"
+                @click="handleView(row)"
+                :icon="View"
+              > 查看 </el-button>
+              <el-button
+                size="small"
+                type="primary"
+                @click="handleEdit(row)"
+                :icon="Edit"
+              >
+                编辑
+              </el-button>
+              <el-button
+                size="small"
+                type="warning"
+                @click="handleHealthCheck(row)"
+                :icon="Warning"
+              >
+                检测
+              </el-button>
+              <el-button
+                size="small"
+                type="danger"
+                @click="handleDelete(row)"
+                :icon="Delete"
+              >
+                删除
+              </el-button>
+            </div>
+          </template>
+        </el-table-column>
       </el-table>
     </el-card>
 
@@ -237,8 +242,8 @@ const getDeviceList = async () => {
     }
 
     const response = await deviceAPI.getDeviceList(params)
-    deviceList.value = response.data || []
-    pagination.total = response.total || response.data?.length || 0
+    deviceList.value = Array.isArray(response.data) ? response.data : (response.data?.data || [])
+    pagination.total = response.data?.total || response.total || deviceList.value.length || 0
   } catch (error) {
     console.error('获取设备列表失败:', error)
   } finally {

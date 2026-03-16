@@ -67,7 +67,7 @@ export const useAdminStore = defineStore('admin', {
         const responseData = response.data
         console.log('解析后的responseData:', responseData)
 
-        this.adminList = responseData.data || []
+        this.adminList = Array.isArray(responseData.data) ? responseData.data : (responseData.data?.data || [])
         console.log('设置adminList:', this.adminList)
 
         // 更新分页信息

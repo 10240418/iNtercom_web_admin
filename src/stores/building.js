@@ -73,7 +73,7 @@ export const useBuildingStore = defineStore('building', {
         const responseData = response.data
         console.log('楼栋解析后的responseData:', responseData)
 
-        this.buildingList = responseData.data || []
+        this.buildingList = Array.isArray(responseData.data) ? responseData.data : (responseData.data?.data || [])
         console.log('设置buildingList:', this.buildingList)
 
         // 更新分页信息
