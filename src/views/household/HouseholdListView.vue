@@ -4,7 +4,9 @@
       <div class="header-content app-page-header-content">
         <div class="title-section app-page-heading">
           <h1>
-            <el-icon class="title-icon app-title-icon"><House /></el-icon>
+            <el-icon class="title-icon app-title-icon">
+              <House />
+            </el-icon>
             住户管理
           </h1>
           <p>管理小区住户信息和居民关系</p>
@@ -23,17 +25,31 @@
         @batch-delete="handleBatchDelete"
       >
         <template #extra>
-          <el-button class="app-button app-button-success" @click="handleAddResident" :icon="UserFilled">
+          <el-button
+            class="app-button app-button-success"
+            @click="handleAddResident"
+            :icon="UserFilled"
+          >
             新增居民
           </el-button>
         </template>
       </TableActionButtons>
     </div>
 
-    <el-tabs v-model="activeTab" class="main-tabs" @tab-change="handleTabChange">
+    <el-tabs
+      v-model="activeTab"
+      class="main-tabs"
+      @tab-change="handleTabChange"
+    >
       <!-- 住户列表标签页 -->
-      <el-tab-pane label="住户列表" name="households">
-        <el-card class="table-card app-table-card" shadow="never">
+      <el-tab-pane
+        label="住户列表"
+        name="households"
+      >
+        <el-card
+          class="table-card app-table-card"
+          shadow="never"
+        >
           <template #header>
             <ListCardHeader
               title="住户列表"
@@ -43,8 +59,16 @@
             />
           </template>
 
-          <div v-if="householdStore.loading" class="loading-container">
-            <el-icon class="is-loading" style="font-size: 24px"><Loading /></el-icon>
+          <div
+            v-if="householdStore.loading"
+            class="loading-container"
+          >
+            <el-icon
+              class="is-loading"
+              style="font-size: 24px"
+            >
+              <Loading />
+            </el-icon>
             <p>正在加载住户数据...</p>
           </div>
 
@@ -57,33 +81,71 @@
             stripe
             :header-cell-style="{ background: 'var(--c-primary-bg)', color: 'var(--c-text-secondary)' }"
           >
-            <el-table-column type="selection" width="55" />
+            <el-table-column
+              type="selection"
+              width="55"
+            />
 
-            <el-table-column prop="id" label="ID" width="80" align="center" />
+            <el-table-column
+              prop="id"
+              label="ID"
+              width="80"
+              align="center"
+            />
 
-            <el-table-column prop="household_number" label="住户号" min-width="140" show-overflow-tooltip />
+            <el-table-column
+              prop="household_number"
+              label="住户号"
+              min-width="140"
+              show-overflow-tooltip
+            />
 
-            <el-table-column prop="building_id" label="所属楼栋" min-width="120" show-overflow-tooltip>
-              <template #default="{ row }">{{ getBuildingName(row.building_id) }}</template>
+            <el-table-column
+              prop="building_id"
+              label="所属楼栋"
+              min-width="120"
+              show-overflow-tooltip
+            >
+              <template
+                #default="{ row }">{{ getBuildingName(row.building_id) }}</template>
             </el-table-column>
 
-            <el-table-column label="居民数量" width="100" align="center">
+            <el-table-column
+              label="居民数量"
+              width="100"
+              align="center"
+            >
               <template #default="{ row }">
                 <el-tag type="success">{{ getResidentCount(row.id) }}人</el-tag>
               </template>
             </el-table-column>
 
-            <el-table-column prop="status" label="状态" width="100">
+            <el-table-column
+              prop="status"
+              label="状态"
+              width="100"
+            >
               <template #default="{ row }">
-                <el-tag :type="getStatusTagType(row.status)">{{ getStatusLabel(row.status) }}</el-tag>
+                <el-tag
+                  :type="getStatusTagType(row.status)">{{ getStatusLabel(row.status) }}</el-tag>
               </template>
             </el-table-column>
 
-            <el-table-column prop="created_at" label="创建时间" min-width="160" show-overflow-tooltip>
-              <template #default="{ row }">{{ formatDateTime(row.created_at) }}</template>
+            <el-table-column
+              prop="created_at"
+              label="创建时间"
+              min-width="160"
+              show-overflow-tooltip
+            >
+              <template
+                #default="{ row }">{{ formatDateTime(row.created_at) }}</template>
             </el-table-column>
 
-            <el-table-column label="操作" fixed="right" width="340">
+            <el-table-column
+              label="操作"
+              fixed="right"
+              width="340"
+            >
               <template #default="{ row }">
                 <div class="action-buttons table-op-buttons">
                   <el-button
@@ -127,9 +189,15 @@
             </el-table-column>
           </el-table>
 
-          <div v-else class="empty-state">
+          <div
+            v-else
+            class="empty-state"
+          >
             <el-empty description="暂无住户数据">
-              <el-button type="primary" @click="handleAddHousehold">新增第一个住户</el-button>
+              <el-button
+                type="primary"
+                @click="handleAddHousehold"
+              >新增第一个住户</el-button>
             </el-empty>
           </div>
 
@@ -145,8 +213,14 @@
       </el-tab-pane>
 
       <!-- 居民列表标签页 -->
-      <el-tab-pane label="居民列表" name="residents">
-        <el-card class="table-card app-table-card" shadow="never">
+      <el-tab-pane
+        label="居民列表"
+        name="residents"
+      >
+        <el-card
+          class="table-card app-table-card"
+          shadow="never"
+        >
           <template #header>
             <ListCardHeader
               title="居民列表"
@@ -156,8 +230,16 @@
             />
           </template>
 
-          <div v-if="householdStore.residentLoading" class="loading-container">
-            <el-icon class="is-loading" style="font-size: 24px"><Loading /></el-icon>
+          <div
+            v-if="householdStore.residentLoading"
+            class="loading-container"
+          >
+            <el-icon
+              class="is-loading"
+              style="font-size: 24px"
+            >
+              <Loading />
+            </el-icon>
             <p>正在加载居民数据...</p>
           </div>
 
@@ -169,25 +251,60 @@
             stripe
             :header-cell-style="{ background: 'var(--c-primary-bg)', color: 'var(--c-text-secondary)' }"
           >
-            <el-table-column prop="id" label="ID" width="80" align="center" />
+            <el-table-column
+              prop="id"
+              label="ID"
+              width="80"
+              align="center"
+            />
 
-            <el-table-column prop="name" label="姓名" min-width="120" show-overflow-tooltip />
+            <el-table-column
+              prop="name"
+              label="姓名"
+              min-width="120"
+              show-overflow-tooltip
+            />
 
-            <el-table-column prop="phone" label="电话" min-width="140" show-overflow-tooltip />
+            <el-table-column
+              prop="phone"
+              label="电话"
+              min-width="140"
+              show-overflow-tooltip
+            />
 
-            <el-table-column prop="email" label="邮箱" min-width="180" show-overflow-tooltip />
+            <el-table-column
+              prop="email"
+              label="邮箱"
+              min-width="180"
+              show-overflow-tooltip
+            />
 
-            <el-table-column prop="household_id" label="所属住户" min-width="100">
+            <el-table-column
+              prop="household_id"
+              label="所属住户"
+              min-width="100"
+            >
               <template #default="{ row }">
-                <el-tag type="primary">{{ getHouseholdNumber(row.household_id) }}</el-tag>
+                <el-tag
+                  type="primary">{{ getHouseholdNumber(row.household_id) }}</el-tag>
               </template>
             </el-table-column>
 
-            <el-table-column prop="created_at" label="创建时间" min-width="160" show-overflow-tooltip>
-              <template #default="{ row }">{{ formatDateTime(row.created_at) }}</template>
+            <el-table-column
+              prop="created_at"
+              label="创建时间"
+              min-width="160"
+              show-overflow-tooltip
+            >
+              <template
+                #default="{ row }">{{ formatDateTime(row.created_at) }}</template>
             </el-table-column>
 
-            <el-table-column label="操作" fixed="right" width="260">
+            <el-table-column
+              label="操作"
+              fixed="right"
+              width="260"
+            >
               <template #default="{ row }">
                 <div class="action-buttons table-op-buttons">
                   <el-button
@@ -222,9 +339,15 @@
             </el-table-column>
           </el-table>
 
-          <div v-else class="empty-state">
+          <div
+            v-else
+            class="empty-state"
+          >
             <el-empty description="暂无居民数据">
-              <el-button type="primary" @click="handleAddResident">新增第一个居民</el-button>
+              <el-button
+                type="primary"
+                @click="handleAddResident"
+              >新增第一个居民</el-button>
             </el-empty>
           </div>
 
