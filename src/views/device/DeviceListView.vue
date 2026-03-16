@@ -36,7 +36,7 @@
           :summary="`共 ${pagination.total} 条记录`"
           :show-refresh="true"
           :refresh-loading="loading"
-          @refresh="getDeviceList"
+          @refresh="refreshDeviceList"
         />
       </template>
 
@@ -197,12 +197,14 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, Delete, Edit, View, Warning, Monitor } from '@element-plus/icons-vue'
 import { deviceAPI } from '@/api/device.js'
 import { formatDateTime } from '@/utils/index.js'
 import { DEVICE_STATUS_LABELS, DEVICE_STATUS_COLORS } from '@/constants/index.js'
+import { useListAutoRefresh } from '@/composables/useListAutoRefresh.js'
+import { useListPagination } from '@/composables/useListPagination.js'
 import { TableActionButtons, TablePagination } from '@/components/table'
 import ListCardHeader from '@/page/button/ListCardHeader.vue'
 import DeviceFormDialog from './components/DeviceFormDialog.vue'
@@ -246,6 +248,7 @@ const getDeviceList = async () => {
     pagination.total = response.data?.total || response.total || deviceList.value.length || 0
   } catch (error) {
     console.error('获取设备列表失败:', error)
+    throw error
   } finally {
     loading.value = false
   }
@@ -297,7 +300,7 @@ const handleHealthCheck = async (row) => {
 
     await deviceAPI.healthCheck(row.id)
     ElMessage.success('健康检测完成')
-    getDeviceList()
+    await refreshDeviceList()
   } catch (error) {
     if (error !== 'cancel') {
       console.error('健康检测失败:', error)
@@ -323,7 +326,7 @@ const handleDelete = async (row) => {
 
     await deviceAPI.deleteDevice(row.id)
     ElMessage.success('删除成功')
-    getDeviceList()
+    await refreshDeviceList()
   } catch (error) {
     if (error !== 'cancel') {
       console.error('删除设备失败:', error)
@@ -354,7 +357,7 @@ const handleBatchDelete = async () => {
     await deviceAPI.batchDeleteDevices(selectedIds.value)
     ElMessage.success('批量删除成功')
     selectedIds.value = []
-    getDeviceList()
+    await refreshDeviceList()
   } catch (error) {
     if (error !== 'cancel') {
       console.error('批量删除失败:', error)
@@ -369,30 +372,38 @@ const handleSelectionChange = (selection) => {
   selectedIds.value = selection.map((item) => item.id)
 }
 
-/**
- * 分页大小变化
- */
-const handleSizeChange = (pageSize) => {
-  pagination.pageSize = pageSize
-  pagination.page = 1
-  getDeviceList()
-}
-
-/**
- * 当前页变化
- */
-const handleCurrentChange = (page) => {
-  pagination.page = page
-  getDeviceList()
-}
+const {
+  handleSizeChange,
+  handleCurrentChange,
+} = useListPagination({
+  onPageChange: async (page, pageSize) => {
+    pagination.page = page
+    if (pageSize) {
+      pagination.pageSize = pageSize
+    }
+    await refreshDeviceList()
+  },
+  onPageSizeChange: async (pageSize) => {
+    pagination.page = 1
+    pagination.pageSize = pageSize
+    await refreshDeviceList()
+  },
+  pageErrorMessage: '切换页面失败',
+  sizeErrorMessage: '切换页面大小失败',
+})
 
 /**
  * 表单提交成功
  */
 const handleFormSuccess = () => {
   dialogVisible.value = false
-  getDeviceList()
+  void refreshDeviceList()
 }
+
+const { refresh: refreshDeviceList } = useListAutoRefresh({
+  fetcher: getDeviceList,
+  errorMessage: '刷新设备列表失败',
+})
 
 /**
  * 获取状态标签
@@ -408,10 +419,6 @@ const getStatusTagType = (status) => {
   return DEVICE_STATUS_COLORS[status] || 'info'
 }
 
-// 组件挂载时获取数据
-onMounted(() => {
-  getDeviceList()
-})
 </script>
 
 <style scoped>

@@ -4,7 +4,9 @@
       <div class="header-content app-page-header-content">
         <div class="title-section app-page-heading">
           <h1>
-            <el-icon class="title-icon app-title-icon"><UserFilled /></el-icon>
+            <el-icon class="title-icon app-title-icon">
+              <UserFilled />
+            </el-icon>
             管理员管理
           </h1>
           <p>管理系统管理员账户信息</p>
@@ -24,11 +26,17 @@
       />
     </div>
 
-    <el-card class="table-card app-table-card" shadow="never">
+    <el-card
+      class="table-card app-table-card"
+      shadow="never"
+    >
       <template #header>
         <ListCardHeader
           title="管理员列表"
           :summary="`共 ${adminStore.pagination.total} 条记录`"
+          :show-refresh="true"
+          :refresh-loading="adminStore.loading"
+          @refresh="refreshAdminData"
         />
       </template>
       <el-table
@@ -40,19 +48,47 @@
         stripe
         :header-cell-style="{ background: 'var(--c-primary-bg)', color: 'var(--c-text-secondary)' }"
       >
-        <el-table-column type="selection" width="56" />
+        <el-table-column
+          type="selection"
+          width="56"
+        />
 
-        <el-table-column prop="id" label="ID" width="80" align="center" />
+        <el-table-column
+          prop="id"
+          label="ID"
+          width="80"
+          align="center"
+        />
 
-        <el-table-column prop="username" label="用户名" min-width="160" show-overflow-tooltip>
+        <el-table-column
+          prop="username"
+          label="用户名"
+          min-width="160"
+          show-overflow-tooltip
+        >
           <template #default="{ row }">{{ row.username || '-' }}</template>
         </el-table-column>
 
-        <el-table-column prop="email" label="邮箱" min-width="160" show-overflow-tooltip />
+        <el-table-column
+          prop="email"
+          label="邮箱"
+          min-width="160"
+          show-overflow-tooltip
+        />
 
-        <el-table-column prop="phone" label="电话" min-width="160" show-overflow-tooltip />
+        <el-table-column
+          prop="phone"
+          label="电话"
+          min-width="160"
+          show-overflow-tooltip
+        />
 
-        <el-table-column prop="role" label="角色" min-width="120" show-overflow-tooltip>
+        <el-table-column
+          prop="role"
+          label="角色"
+          min-width="120"
+          show-overflow-tooltip
+        >
           <template #default="{ row }">
             <el-tag :type="getRoleTagType(row.role)">
               {{ getRoleLabel(row.role) }}
@@ -60,17 +96,39 @@
           </template>
         </el-table-column>
 
-        <el-table-column prop="created_at" label="创建时间" min-width="180" show-overflow-tooltip>
-          <template #default="{ row }">{{ formatDateTime(row.created_at) }}</template>
+        <el-table-column
+          prop="created_at"
+          label="创建时间"
+          min-width="180"
+          show-overflow-tooltip
+        >
+          <template
+            #default="{ row }">{{ formatDateTime(row.created_at) }}</template>
         </el-table-column>
 
-        <el-table-column label="操作" fixed="right" width="160">
+        <el-table-column
+          label="操作"
+          fixed="right"
+          width="160"
+        >
           <template #default="{ row }">
             <div class="table-op-buttons">
-              <el-button size="small" type="primary" @click="handleEdit(row)" :icon="Edit" plain>
+              <el-button
+                size="small"
+                type="primary"
+                @click="handleEdit(row)"
+                :icon="Edit"
+                plain
+              >
                 编辑
               </el-button>
-              <el-button size="small" type="danger" @click="handleDelete(row)" :icon="Delete" plain>
+              <el-button
+                size="small"
+                type="danger"
+                @click="handleDelete(row)"
+                :icon="Delete"
+                plain
+              >
                 删除
               </el-button>
             </div>
@@ -79,9 +137,15 @@
       </el-table>
 
       <!-- 空状态 -->
-      <div v-if="!adminStore.loading && !adminStore.hasAdmins" class="empty-state">
+      <div
+        v-if="!adminStore.loading && !adminStore.hasAdmins"
+        class="empty-state"
+      >
         <el-empty description="暂无管理员数据">
-          <el-button type="primary" @click="handleAdd">新增第一个管理员</el-button>
+          <el-button
+            type="primary"
+            @click="handleAdd"
+          >新增第一个管理员</el-button>
         </el-empty>
       </div>
     </el-card>
@@ -105,12 +169,15 @@
     />
 
     <!-- 详情弹窗 -->
-    <AdminDetailDialog v-model:visible="detailVisible" :admin-data="currentAdmin" />
+    <AdminDetailDialog
+      v-model:visible="detailVisible"
+      :admin-data="currentAdmin"
+    />
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {
   Plus,
@@ -121,6 +188,8 @@ import {
 import { useAdminStore } from '@/stores/admin.js'
 import { formatDateTime } from '@/utils/index.js'
 import { USER_ROLE_LABELS } from '@/constants/index.js'
+import { useListAutoRefresh } from '@/composables/useListAutoRefresh.js'
+import { useListPagination } from '@/composables/useListPagination.js'
 import { TableActionButtons, TablePagination } from '@/components/table'
 import ListCardHeader from '@/page/button/ListCardHeader.vue'
 import AdminFormDialog from './components/AdminFormDialog.vue'
@@ -213,34 +282,27 @@ const handleSelectionChange = (selection) => {
   selectedIds.value = selection.map((item) => item.id)
 }
 
-/**
- * 分页大小变化
- */
-const handleSizeChange = async (pageSize) => {
-  try {
-    await adminStore.changePage(1, pageSize)
-  } catch (error) {
-    ElMessage.error('切换页面大小失败')
-  }
-}
-
-/**
- * 当前页变化
- */
-const handleCurrentChange = async (page) => {
-  try {
-    await adminStore.changePage(page)
-  } catch (error) {
-    ElMessage.error('切换页面失败')
-  }
-}
+const {
+  handleSizeChange,
+  handleCurrentChange,
+} = useListPagination({
+  onPageChange: (page, pageSize) => adminStore.changePage(page, pageSize),
+  pageErrorMessage: '切换页面失败',
+  sizeErrorMessage: '切换页面大小失败',
+})
 
 /**
  * 表单提交成功
  */
 const handleFormSuccess = () => {
   dialogVisible.value = false
+  void refreshAdminData()
 }
+
+const { refresh: refreshAdminData } = useListAutoRefresh({
+  fetcher: () => adminStore.fetchAdminList(),
+  errorMessage: '刷新管理员列表失败',
+})
 
 /**
  * 获取角色标签
@@ -261,14 +323,6 @@ const getRoleTagType = (role) => {
   return typeMap[role] || 'info'
 }
 
-// 组件挂载时获取数据
-onMounted(async () => {
-  try {
-    await adminStore.fetchAdminList()
-  } catch (error) {
-    ElMessage.error('获取管理员列表失败')
-  }
-})
 </script>
 
 <style scoped>

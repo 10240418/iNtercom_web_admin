@@ -7,13 +7,26 @@
       </div>
 
       <div class="toolbar-actions">
-        <el-input v-model="templateName" placeholder="模板名称（可选）" style="width: 200px" />
-        <el-button :loading="templateLoading" @click="loadTemplate">加载模板</el-button>
-        <el-button :loading="templateSaving" @click="saveTemplate">保存模板</el-button>
+        <el-input
+          v-model="templateName"
+          placeholder="模板名称（可选）"
+          style="width: 200px"
+        />
+        <el-button
+          :loading="templateLoading"
+          @click="loadTemplate"
+        >加载模板</el-button>
+        <el-button
+          :loading="templateSaving"
+          @click="saveTemplate"
+        >保存模板</el-button>
       </div>
 
       <div class="toolbar-grid">
-        <el-form-item label="楼号编码" class="compact-item">
+        <el-form-item
+          label="楼号编码"
+          class="compact-item"
+        >
           <el-input
             v-model="buildingCodeInput"
             maxlength="8"
@@ -23,7 +36,10 @@
           />
         </el-form-item>
 
-        <el-form-item label="楼层多选" class="compact-item wide-item">
+        <el-form-item
+          label="楼层多选"
+          class="compact-item wide-item"
+        >
           <el-select
             v-model="selectedFloors"
             multiple
@@ -37,11 +53,19 @@
             @change="handleFloorsChange"
             style="width: 100%"
           >
-            <el-option v-for="floor in floorOptions" :key="floor" :label="floor" :value="floor" />
+            <el-option
+              v-for="floor in floorOptions"
+              :key="floor"
+              :label="floor"
+              :value="floor"
+            />
           </el-select>
         </el-form-item>
 
-        <el-form-item label="自动并单元" class="compact-item">
+        <el-form-item
+          label="自动并单元"
+          class="compact-item"
+        >
           <el-switch v-model="autoMergeUnits" />
         </el-form-item>
       </div>
@@ -85,11 +109,17 @@
       class="floor-table"
       style="width: 100%"
     >
-      <el-table-column type="expand" width="56">
+      <el-table-column
+        type="expand"
+        width="56"
+      >
         <template #default="{ row }">
           <div class="expand-panel app-inline-card">
             <div class="expand-grid">
-              <el-form-item label="单元多选" class="compact-item wide-item">
+              <el-form-item
+                label="单元多选"
+                class="compact-item wide-item"
+              >
                 <el-select
                   v-model="row.units"
                   multiple
@@ -103,11 +133,19 @@
                   @change="(vals) => handleUnitsChange(row, vals)"
                   style="width: 100%"
                 >
-                  <el-option v-for="unit in unitOptions" :key="unit" :label="unit" :value="unit" />
+                  <el-option
+                    v-for="unit in unitOptions"
+                    :key="unit"
+                    :label="unit"
+                    :value="unit"
+                  />
                 </el-select>
               </el-form-item>
 
-              <el-form-item label="楼层显示名" class="compact-item">
+              <el-form-item
+                label="楼层显示名"
+                class="compact-item"
+              >
                 <el-input
                   v-model="row.floorLabel"
                   maxlength="12"
@@ -141,27 +179,46 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="floorRaw" label="原始层" width="100" />
+      <el-table-column
+        prop="floorRaw"
+        label="原始层"
+        width="100"
+      />
 
-      <el-table-column label="显示楼层" width="160" show-overflow-tooltip>
+      <el-table-column
+        label="显示楼层"
+        width="160"
+        show-overflow-tooltip
+      >
         <template #default="{ row }">
           <el-tag type="primary">{{ row.floorLabel }}</el-tag>
         </template>
       </el-table-column>
 
-      <el-table-column label="单元" min-width="180" show-overflow-tooltip>
+      <el-table-column
+        label="单元"
+        min-width="180"
+        show-overflow-tooltip
+      >
         <template #default="{ row }">
           <span>{{ getUnitDisplay(row) }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="生成条数" width="120" align="center">
+      <el-table-column
+        label="生成条数"
+        width="120"
+        align="center"
+      >
         <template #default="{ row }">
           <el-tag type="success">{{ getRowGeneratedCount(row) }}</el-tag>
         </template>
       </el-table-column>
 
-      <el-table-column label="状态" width="120">
+      <el-table-column
+        label="状态"
+        width="120"
+      >
         <template #default="{ row }">
           <el-tag :type="row.disabledByMerge ? 'info' : 'success'">
             {{ row.disabledByMerge ? '被并层' : '生效中' }}
@@ -170,34 +227,95 @@
       </el-table-column>
     </el-table>
 
-    <el-empty v-else description="请先选择楼层" />
+    <el-empty
+      v-else
+      description="请先选择楼层"
+    />
 
-    <div class="preview-card app-surface" v-if="generatedRows.length > 0">
+    <div
+      class="preview-card app-surface"
+      v-if="generatedRows.length > 0"
+    >
       <div class="preview-head">
         <h4 class="app-panel-title">户号预览（{{ generatedRows.length }}）</h4>
-        <el-button size="small" @click="copyPreview">复制前 200 条</el-button>
+        <el-button
+          size="small"
+          @click="copyPreview"
+        >复制前 200 条</el-button>
       </div>
 
-      <el-table :data="generatedRows" table-layout="fixed" style="width: 100%" max-height="360">
-        <el-table-column prop="house" label="house" width="120" show-overflow-tooltip />
-        <el-table-column prop="floor" label="floor" width="120" show-overflow-tooltip />
-        <el-table-column prop="unit" label="unit" width="120" show-overflow-tooltip />
-        <el-table-column prop="household_id" label="household_id" min-width="240" show-overflow-tooltip />
+      <el-table
+        :data="generatedRows"
+        table-layout="fixed"
+        style="width: 100%"
+        max-height="360"
+      >
+        <el-table-column
+          prop="house"
+          label="house"
+          width="120"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          prop="floor"
+          label="floor"
+          width="120"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          prop="unit"
+          label="unit"
+          width="120"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          prop="household_id"
+          label="household_id"
+          min-width="240"
+          show-overflow-tooltip
+        />
       </el-table>
     </div>
 
-    <div class="query-card app-surface" v-loading="queryLoading">
+    <div
+      class="query-card app-surface"
+      v-loading="queryLoading"
+    >
       <div class="preview-head">
         <h4 class="app-panel-title">已落库户号查询</h4>
       </div>
 
       <div class="query-grid">
-        <el-input v-model="queryForm.search" placeholder="关键词：户号/扩展ID" clearable />
-        <el-input v-model="queryForm.house_code" placeholder="楼号编码 house_code" clearable />
-        <el-input v-model="queryForm.floor_code" placeholder="楼层编码 floor_code" clearable />
-        <el-input v-model="queryForm.unit_code" placeholder="单元编码 unit_code" clearable />
-        <el-input v-model="queryForm.household_ext_id" placeholder="扩展ID household_ext_id" clearable />
-        <el-select v-model="queryForm.status" placeholder="状态" clearable>
+        <el-input
+          v-model="queryForm.search"
+          placeholder="关键词：户号/扩展ID"
+          clearable
+        />
+        <el-input
+          v-model="queryForm.house_code"
+          placeholder="楼号编码 house_code"
+          clearable
+        />
+        <el-input
+          v-model="queryForm.floor_code"
+          placeholder="楼层编码 floor_code"
+          clearable
+        />
+        <el-input
+          v-model="queryForm.unit_code"
+          placeholder="单元编码 unit_code"
+          clearable
+        />
+        <el-input
+          v-model="queryForm.household_ext_id"
+          placeholder="扩展ID household_ext_id"
+          clearable
+        />
+        <el-select
+          v-model="queryForm.status"
+          placeholder="状态"
+          clearable
+        >
           <el-option
             v-for="status in statusOptions"
             :key="status.label"
@@ -208,19 +326,66 @@
       </div>
 
       <div class="query-actions">
-        <el-button class="app-button app-button-primary" @click="handleQuerySubmit">查询</el-button>
-        <el-button class="app-button app-button-secondary" @click="handleQueryReset">重置</el-button>
-        <el-button :loading="exportLoading" @click="exportCurrentFilterCSV">导出当前筛选 CSV</el-button>
+        <el-button
+          class="app-button app-button-primary"
+          @click="handleQuerySubmit"
+        >查询</el-button>
+        <el-button
+          class="app-button app-button-secondary"
+          @click="handleQueryReset"
+        >重置</el-button>
+        <el-button
+          :loading="exportLoading"
+          @click="exportCurrentFilterCSV"
+        >导出当前筛选 CSV</el-button>
       </div>
 
-      <el-table :data="existingHouseholds" table-layout="fixed" style="width: 100%" max-height="360">
-        <el-table-column prop="id" label="ID" width="80" />
-        <el-table-column prop="household_number" label="户号" min-width="150" show-overflow-tooltip />
-        <el-table-column prop="house_code" label="house" width="110" show-overflow-tooltip />
-        <el-table-column prop="floor_code" label="floor" width="130" show-overflow-tooltip />
-        <el-table-column prop="unit_code" label="unit" width="130" show-overflow-tooltip />
-        <el-table-column prop="household_ext_id" label="household_id" min-width="220" show-overflow-tooltip />
-        <el-table-column prop="status" label="状态" width="100">
+      <el-table
+        :data="existingHouseholds"
+        table-layout="fixed"
+        style="width: 100%"
+        max-height="360"
+      >
+        <el-table-column
+          prop="id"
+          label="ID"
+          width="80"
+        />
+        <el-table-column
+          prop="household_number"
+          label="户号"
+          min-width="150"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          prop="house_code"
+          label="house"
+          width="110"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          prop="floor_code"
+          label="floor"
+          width="130"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          prop="unit_code"
+          label="unit"
+          width="130"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          prop="household_ext_id"
+          label="household_id"
+          min-width="220"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          prop="status"
+          label="状态"
+          width="100"
+        >
           <template #default="{ row }">
             <el-tag :type="row.status === 'active' ? 'success' : 'info'">
               {{ row.status || 'unknown' }}
@@ -230,13 +395,10 @@
       </el-table>
 
       <div class="query-pagination">
-        <el-pagination
-          background
-          layout="total, sizes, prev, pager, next"
+        <TablePagination
+          v-model:current-page="queryPage"
+          v-model:page-size="queryPageSize"
           :total="queryTotal"
-          :current-page="queryPage"
-          :page-size="queryPageSize"
-          :page-sizes="[10, 20, 50, 100]"
           @size-change="handlePageSizeChange"
           @current-change="handlePageChange"
         />
@@ -250,6 +412,7 @@ import { computed, ref, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { buildingAPI } from '@/api/building.js'
 import { householdAPI } from '@/api/household.js'
+import { TablePagination } from '@/components/table'
 
 const props = defineProps({
   buildingData: {
@@ -339,7 +502,7 @@ const statusOptions = [
   { label: '停用', value: 'inactive' },
 ]
 
-function getListQueryParams() {
+function getListQueryParams () {
   const buildingID = props.buildingData?.id
   const params = {
     page: queryPage.value,
@@ -356,7 +519,7 @@ function getListQueryParams() {
   return params
 }
 
-async function loadExistingHouseholds() {
+async function loadExistingHouseholds () {
   const buildingID = props.buildingData?.id
   if (!buildingID) return
 
@@ -375,16 +538,16 @@ async function loadExistingHouseholds() {
   }
 }
 
-async function runHouseholdQuery() {
+async function runHouseholdQuery () {
   await loadExistingHouseholds()
 }
 
-async function handleQuerySubmit() {
+async function handleQuerySubmit () {
   queryPage.value = 1
   await runHouseholdQuery()
 }
 
-async function handleQueryReset() {
+async function handleQueryReset () {
   queryForm.value = {
     search: '',
     house_code: '',
@@ -397,18 +560,18 @@ async function handleQueryReset() {
   await runHouseholdQuery()
 }
 
-async function handlePageChange(page) {
+async function handlePageChange (page) {
   queryPage.value = page
   await loadExistingHouseholds()
 }
 
-async function handlePageSizeChange(size) {
+async function handlePageSizeChange (size) {
   queryPageSize.value = size
   queryPage.value = 1
   await loadExistingHouseholds()
 }
 
-function escapeCSVCell(value) {
+function escapeCSVCell (value) {
   const text = String(value ?? '')
   if (text.includes('"') || text.includes(',') || text.includes('\n')) {
     return `"${text.replace(/"/g, '""')}"`
@@ -416,7 +579,7 @@ function escapeCSVCell(value) {
   return text
 }
 
-async function exportCurrentFilterCSV() {
+async function exportCurrentFilterCSV () {
   const buildingID = props.buildingData?.id
   if (!buildingID) {
     ElMessage.warning('请先选择有效楼栋')
@@ -499,7 +662,7 @@ async function exportCurrentFilterCSV() {
       return
     }
 
-    ElMessage.success(`导出完成，共 ${rows.length} 条`) 
+    ElMessage.success(`导出完成，共 ${rows.length} 条`)
   } catch (error) {
     ElMessage.error(`导出失败: ${error.message || '未知错误'}`)
   } finally {
@@ -507,7 +670,7 @@ async function exportCurrentFilterCSV() {
   }
 }
 
-function syncBuildingCode() {
+function syncBuildingCode () {
   if (buildingCodeInput.value) return
   const code = String(props.buildingData?.building_code || '').trim()
   if (code) {
@@ -521,13 +684,13 @@ function syncBuildingCode() {
   }
 }
 
-function handleFloorsChange(values) {
+function handleFloorsChange (values) {
   const normalized = normalizeFloorSelection(values)
   selectedFloors.value = normalized
   rebuildFloorRows()
 }
 
-function normalizeFloorSelection(values) {
+function normalizeFloorSelection (values) {
   const uniq = Array.from(new Set((values || []).map((v) => String(v).trim()).filter(Boolean)))
 
   const standardSelected = uniq.filter((v) => floorOptions.includes(v))
@@ -542,7 +705,7 @@ function normalizeFloorSelection(values) {
   return sortFloors(uniq)
 }
 
-function sortFloors(values) {
+function sortFloors (values) {
   const standard = []
   const custom = []
 
@@ -558,7 +721,7 @@ function sortFloors(values) {
   return [...standard, ...custom]
 }
 
-function rebuildFloorRows() {
+function rebuildFloorRows () {
   const oldMap = new Map(floorRows.value.map((r) => [r.floorRaw, r]))
 
   floorRows.value = selectedFloors.value.map((floorRaw, index) => {
@@ -586,7 +749,7 @@ function rebuildFloorRows() {
   rebuildGeneratedRows()
 }
 
-function reapplyMergeState() {
+function reapplyMergeState () {
   const byRaw = new Map(floorRows.value.map((r) => [r.floorRaw, r]))
   floorRows.value.forEach((row) => {
     row.disabledByMerge = false
@@ -604,13 +767,13 @@ function reapplyMergeState() {
   })
 }
 
-function canMergeWithNext(row) {
+function canMergeWithNext (row) {
   if (row.disabledByMerge) return false
   const next = floorRows.value[row.index + 1]
   return !!next && !next.disabledByMerge
 }
 
-function mergeWithNext(row) {
+function mergeWithNext (row) {
   if (!canMergeWithNext(row)) return
   const next = floorRows.value[row.index + 1]
   row.mergedTo = next.floorRaw
@@ -619,14 +782,14 @@ function mergeWithNext(row) {
   rebuildGeneratedRows()
 }
 
-function cancelMerge(row) {
+function cancelMerge (row) {
   row.mergedTo = ''
   row.floorLabel = row.floorRaw
   reapplyMergeState()
   rebuildGeneratedRows()
 }
 
-function handleUnitsChange(row, values) {
+function handleUnitsChange (row, values) {
   const uniq = Array.from(new Set((values || []).map((v) => String(v).trim().toUpperCase()).filter(Boolean)))
 
   const standardSelected = uniq.filter((v) => unitOptions.includes(v))
@@ -645,18 +808,18 @@ function handleUnitsChange(row, values) {
   rebuildGeneratedRows()
 }
 
-function getUnitDisplay(row) {
+function getUnitDisplay (row) {
   if (!row.units?.length) return '未配置'
   const merged = buildUnitGroups(row.units)
   return merged.join(', ')
 }
 
-function getRowGeneratedCount(row) {
+function getRowGeneratedCount (row) {
   if (row.disabledByMerge) return 0
   return buildUnitGroups(row.units).length
 }
 
-function buildUnitGroups(units) {
+function buildUnitGroups (units) {
   if (!units || units.length === 0) return []
 
   const normalized = Array.from(new Set(units))
@@ -690,13 +853,13 @@ function buildUnitGroups(units) {
   return [...groups, ...custom]
 }
 
-function toIdPart(value) {
+function toIdPart (value) {
   return String(value || '')
     .toUpperCase()
     .replace(/[^A-Z0-9]/g, '')
 }
 
-function rebuildGeneratedRows() {
+function rebuildGeneratedRows () {
   const rows = []
 
   floorRows.value.forEach((floorRow) => {
@@ -721,7 +884,7 @@ function rebuildGeneratedRows() {
   generatedRows.value = rows
 }
 
-function getTemplatePayload() {
+function getTemplatePayload () {
   return {
     selectedFloors: selectedFloors.value,
     floorRows: floorRows.value.map((row) => ({
@@ -735,7 +898,7 @@ function getTemplatePayload() {
   }
 }
 
-function applyTemplatePayload(payload) {
+function applyTemplatePayload (payload) {
   selectedFloors.value = Array.isArray(payload.selectedFloors) ? payload.selectedFloors : []
   autoMergeUnits.value = !!payload.autoMergeUnits
   buildingCodeInput.value = payload.buildingCodeInput || buildingCodeInput.value
@@ -758,7 +921,7 @@ function applyTemplatePayload(payload) {
   rebuildFloorRows()
 }
 
-async function loadTemplate() {
+async function loadTemplate () {
   const buildingID = props.buildingData?.id
   if (!buildingID) return
 
@@ -781,7 +944,7 @@ async function loadTemplate() {
   }
 }
 
-async function saveTemplate() {
+async function saveTemplate () {
   const buildingID = props.buildingData?.id
   if (!buildingID) {
     ElMessage.warning('请先选择有效楼栋')
@@ -802,7 +965,7 @@ async function saveTemplate() {
   }
 }
 
-async function persistGeneratedRows() {
+async function persistGeneratedRows () {
   const buildingID = props.buildingData?.id
   if (!buildingID) {
     ElMessage.warning('请先选择有效楼栋')
@@ -878,7 +1041,7 @@ async function persistGeneratedRows() {
   }
 }
 
-async function rollbackLastBatch() {
+async function rollbackLastBatch () {
   const buildingID = props.buildingData?.id
   if (!buildingID || lastCreatedIDs.value.length === 0) {
     ElMessage.warning('暂无可回滚数据')
@@ -927,7 +1090,7 @@ watch(autoMergeUnits, () => {
   rebuildGeneratedRows()
 })
 
-async function copyPreview() {
+async function copyPreview () {
   try {
     const payload = generatedRows.value.slice(0, 200)
     const text = payload
@@ -1056,6 +1219,5 @@ async function copyPreview() {
   .query-grid {
     grid-template-columns: 1fr;
   }
-
 }
 </style>

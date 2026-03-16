@@ -401,7 +401,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onActivated, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {
   Plus,
@@ -416,6 +416,8 @@ import { useHouseholdStore } from '@/stores/household.js'
 import { useBuildingStore } from '@/stores/building.js'
 import { formatDateTime } from '@/utils/index.js'
 import { COMMON_STATUS_LABELS, COMMON_STATUS_COLORS } from '@/constants/index.js'
+import { useListAutoRefresh } from '@/composables/useListAutoRefresh.js'
+import { useListPagination } from '@/composables/useListPagination.js'
 import { TableActionButtons, TablePagination } from '@/components/table'
 import ListCardHeader from '@/page/button/ListCardHeader.vue'
 import HouseholdFormDialog from './components/HouseholdFormDialog.vue'
@@ -454,9 +456,9 @@ const handleTabChange = (tabName) => {
   activeTab.value = tabName
 
   if (tabName === 'households') {
-    refreshHouseholdData()
+    void refreshHouseholdData()
   } else {
-    refreshResidentData()
+    void refreshResidentData()
   }
 }
 
@@ -601,56 +603,30 @@ const handleSelectionChange = (selection) => {
   selectedIds.value = selection.map((item) => item.id)
 }
 
-/**
- * 住户分页大小变化
- */
-const handleHouseholdSizeChange = async (pageSize) => {
-  try {
-    await householdStore.changeHouseholdPage(1, pageSize)
-  } catch (error) {
-    ElMessage.error('切换页面大小失败')
-  }
-}
+const {
+  handleSizeChange: handleHouseholdSizeChange,
+  handleCurrentChange: handleHouseholdCurrentChange,
+} = useListPagination({
+  onPageChange: (page, pageSize) => householdStore.changeHouseholdPage(page, pageSize),
+  pageErrorMessage: '切换页面失败',
+  sizeErrorMessage: '切换页面大小失败',
+})
 
-/**
- * 住户当前页变化
- */
-const handleHouseholdCurrentChange = async (page) => {
-  try {
-    await householdStore.changeHouseholdPage(page)
-  } catch (error) {
-    ElMessage.error('切换页面失败')
-  }
-}
-
-/**
- * 居民分页大小变化
- */
-const handleResidentSizeChange = async (pageSize) => {
-  try {
-    await householdStore.changeResidentPage(1, pageSize)
-  } catch (error) {
-    ElMessage.error('切换页面大小失败')
-  }
-}
-
-/**
- * 居民当前页变化
- */
-const handleResidentCurrentChange = async (page) => {
-  try {
-    await householdStore.changeResidentPage(page)
-  } catch (error) {
-    ElMessage.error('切换页面失败')
-  }
-}
+const {
+  handleSizeChange: handleResidentSizeChange,
+  handleCurrentChange: handleResidentCurrentChange,
+} = useListPagination({
+  onPageChange: (page, pageSize) => householdStore.changeResidentPage(page, pageSize),
+  pageErrorMessage: '切换页面失败',
+  sizeErrorMessage: '切换页面大小失败',
+})
 
 /**
  * 住户表单提交成功
  */
 const handleHouseholdFormSuccess = () => {
   householdDialogVisible.value = false
-  refreshHouseholdData()
+  void refreshHouseholdData()
 }
 
 /**
@@ -658,30 +634,29 @@ const handleHouseholdFormSuccess = () => {
  */
 const handleResidentFormSuccess = () => {
   residentDialogVisible.value = false
-  refreshResidentData()
+  void refreshResidentData()
 }
 
-/**
- * 刷新住户数据
- */
-const refreshHouseholdData = async () => {
-  try {
-    await householdStore.fetchHouseholdList()
-  } catch (error) {
-    ElMessage.error('刷新住户数据失败')
-  }
-}
+const { refresh: refreshBuildingData } = useListAutoRefresh({
+  fetcher: () => buildingStore.fetchBuildingList(),
+  errorMessage: '刷新楼栋数据失败',
+  autoOnMounted: false,
+  autoOnActivated: false,
+})
 
-/**
- * 刷新居民数据
- */
-const refreshResidentData = async () => {
-  try {
-    await householdStore.fetchResidentList()
-  } catch (error) {
-    ElMessage.error('刷新居民数据失败')
-  }
-}
+const { refresh: refreshHouseholdData } = useListAutoRefresh({
+  fetcher: () => householdStore.fetchHouseholdList(),
+  errorMessage: '刷新住户数据失败',
+  autoOnMounted: false,
+  autoOnActivated: false,
+})
+
+const { refresh: refreshResidentData } = useListAutoRefresh({
+  fetcher: () => householdStore.fetchResidentList(),
+  errorMessage: '刷新居民数据失败',
+  autoOnMounted: false,
+  autoOnActivated: false,
+})
 
 /**
  * 获取楼栋名称
@@ -726,12 +701,20 @@ onMounted(async () => {
   try {
     // 同时获取楼栋和住户数据
     await Promise.all([
-      buildingStore.fetchBuildingList(),
-      householdStore.fetchHouseholdList(),
-      householdStore.fetchResidentList(),
+      refreshBuildingData(),
+      refreshHouseholdData(),
+      refreshResidentData(),
     ])
   } catch (error) {
     ElMessage.error('获取数据失败')
+  }
+})
+
+onActivated(async () => {
+  if (activeTab.value === 'households') {
+    await refreshHouseholdData()
+  } else {
+    await refreshResidentData()
   }
 })
 </script>

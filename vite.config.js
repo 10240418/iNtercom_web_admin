@@ -31,7 +31,7 @@ export default defineConfig(({ command }) => ({
   build: {
     rollupOptions: {
       output: {
-        manualChunks(id) {
+        manualChunks (id) {
           if (!id.includes('node_modules')) return
 
           if (id.includes('@element-plus/icons-vue')) {
@@ -92,7 +92,7 @@ export default defineConfig(({ command }) => ({
     },
     proxy: {
       '/api': {
-        target: 'http://localhost:20033',
+        target: 'http://43.139.69.15:20033',
         changeOrigin: true,
         secure: false,
         configure: (proxy, _options) => {

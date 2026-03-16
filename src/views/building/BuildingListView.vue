@@ -4,7 +4,9 @@
       <div class="header-content app-page-header-content">
         <div class="title-section app-page-heading">
           <h1>
-            <el-icon class="title-icon app-title-icon"><OfficeBuilding /></el-icon>
+            <el-icon class="title-icon app-title-icon">
+              <OfficeBuilding />
+            </el-icon>
             楼栋管理
           </h1>
           <p>管理小区楼栋信息和关联关系</p>
@@ -24,16 +26,30 @@
       />
     </div>
 
-    <el-card class="table-card app-table-card" shadow="never">
+    <el-card
+      class="table-card app-table-card"
+      shadow="never"
+    >
       <template #header>
         <ListCardHeader
           title="楼栋列表"
           :summary="`共 ${buildingStore.pagination.total} 条记录`"
+          :show-refresh="true"
+          :refresh-loading="buildingStore.loading"
+          @refresh="refreshBuildingData"
         />
       </template>
 
-      <div v-if="buildingStore.loading" class="loading-container">
-        <el-icon class="is-loading" style="font-size: 24px"><Loading /></el-icon>
+      <div
+        v-if="buildingStore.loading"
+        class="loading-container"
+      >
+        <el-icon
+          class="is-loading"
+          style="font-size: 24px"
+        >
+          <Loading />
+        </el-icon>
         <p>正在加载楼栋数据...</p>
       </div>
 
@@ -46,34 +62,87 @@
         stripe
         :header-cell-style="{ background: 'var(--c-primary-bg)', color: 'var(--c-text-secondary)' }"
       >
-        <el-table-column type="selection" width="56" />
-        <el-table-column prop="id" label="ID" width="80" align="center" />
-        <el-table-column prop="building_name" label="楼栋名称" min-width="160" show-overflow-tooltip />
-        <el-table-column prop="building_code" label="楼栋编码" min-width="140" show-overflow-tooltip />
-        <el-table-column prop="address" label="地址" min-width="220" show-overflow-tooltip />
-        <el-table-column prop="status" label="状态" width="120">
+        <el-table-column
+          type="selection"
+          width="56"
+        />
+        <el-table-column
+          prop="id"
+          label="ID"
+          width="80"
+          align="center"
+        />
+        <el-table-column
+          prop="building_name"
+          label="楼栋名称"
+          min-width="160"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          prop="building_code"
+          label="楼栋编码"
+          min-width="140"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          prop="address"
+          label="地址"
+          min-width="220"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          prop="status"
+          label="状态"
+          width="120"
+        >
           <template #default="{ row }">
-            <el-tag :type="getStatusTagType(row.status)">{{ getStatusLabel(row.status) }}</el-tag>
+            <el-tag
+              :type="getStatusTagType(row.status)">{{ getStatusLabel(row.status) }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="created_at" label="创建时间" min-width="180" show-overflow-tooltip>
+        <el-table-column
+          prop="created_at"
+          label="创建时间"
+          min-width="180"
+          show-overflow-tooltip
+        >
           <template #default="{ row }">
             {{ formatDateTime(row.created_at) }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="160" fixed="right">
+        <el-table-column
+          label="操作"
+          width="160"
+          fixed="right"
+        >
           <template #default="{ row }">
             <div class="table-op-buttons">
-              <el-button size="small" type="primary" plain @click="handleEditBuilding(row)">编辑</el-button>
-              <el-button size="small" type="danger" plain @click="handleDeleteBuilding(row)">删除</el-button>
+              <el-button
+                size="small"
+                type="primary"
+                plain
+                @click="handleEditBuilding(row)"
+              >编辑</el-button>
+              <el-button
+                size="small"
+                type="danger"
+                plain
+                @click="handleDeleteBuilding(row)"
+              >删除</el-button>
             </div>
           </template>
         </el-table-column>
       </el-table>
 
-      <div v-else class="empty-state">
+      <div
+        v-else
+        class="empty-state"
+      >
         <el-empty description="暂无楼栋数据">
-          <el-button type="primary" @click="handleAddBuilding">新增第一个楼栋</el-button>
+          <el-button
+            type="primary"
+            @click="handleAddBuilding"
+          >新增第一个楼栋</el-button>
         </el-empty>
       </div>
     </el-card>
@@ -97,11 +166,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { OfficeBuilding, Loading, Plus, Delete } from '@element-plus/icons-vue'
 import { useBuildingStore } from '@/stores/building.js'
 import { formatDateTime } from '@/utils/index.js'
+import { useListAutoRefresh } from '@/composables/useListAutoRefresh.js'
+import { useListPagination } from '@/composables/useListPagination.js'
 import { TableActionButtons, TablePagination } from '@/components/table'
 import ListCardHeader from '@/page/button/ListCardHeader.vue'
 import BuildingFormDialog from './components/BuildingFormDialog.vue'
@@ -116,21 +187,14 @@ const getStatusLabel = (status) => (status === 'active' ? '启用' : '停用')
 
 const getStatusTagType = (status) => (status === 'active' ? 'success' : 'info')
 
-const handleSizeChange = async (pageSize) => {
-  try {
-    await buildingStore.changePage(1, pageSize)
-  } catch (error) {
-    ElMessage.error('更新分页失败')
-  }
-}
-
-const handleCurrentChange = async (page) => {
-  try {
-    await buildingStore.changePage(page)
-  } catch (error) {
-    ElMessage.error('切换分页失败')
-  }
-}
+const {
+  handleSizeChange,
+  handleCurrentChange,
+} = useListPagination({
+  onPageChange: (page, pageSize) => buildingStore.changePage(page, pageSize),
+  pageErrorMessage: '切换分页失败',
+  sizeErrorMessage: '更新分页失败',
+})
 
 const handleSelectionChange = (selection) => {
   selectedIds.value = selection.map((item) => item.id)
@@ -190,15 +254,12 @@ const handleBatchDelete = async () => {
 
 const handleFormSuccess = () => {
   dialogVisible.value = false
-  buildingStore.fetchBuildingList()
+  void refreshBuildingData()
 }
 
-onMounted(async () => {
-  try {
-    await buildingStore.fetchBuildingList()
-  } catch (error) {
-    ElMessage.error('获取楼栋列表失败')
-  }
+const { refresh: refreshBuildingData } = useListAutoRefresh({
+  fetcher: () => buildingStore.fetchBuildingList(),
+  errorMessage: '刷新楼栋列表失败',
 })
 </script>
 

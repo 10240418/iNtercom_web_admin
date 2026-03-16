@@ -1,61 +1,38 @@
 <script setup>
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { ElMessage } from 'element-plus'
+import { buildingAPI } from '@/api/building.js'
 import { deviceAPI } from '@/api/device.js'
 import { householdAPI } from '@/api/household.js'
 import { mqttAPI } from '@/api/mqtt.js'
 
 const loading = ref(false)
 const deviceOptions = ref([])
+const allHouseholdOptions = ref([])
 const householdOptions = ref([])
 const logs = ref([])
-const lastResponse = ref(null)
+const initiateResponse = ref(null)
+const callerResponse = ref(null)
+const calleeResponse = ref(null)
 const sessionInfo = ref(null)
 
 const form = reactive({
   deviceId: '',
   householdNumber: '',
   callId: '',
-  callerAction: 'hangup',
-  calleeAction: 'answered',
-  actionReason: '',
-})
-
-const statusForm = reactive({
-  online: true,
-  battery: 88,
-  firmwareVersion: '1.0.0',
-})
-
-const messageForm = reactive({
-  type: 'notification',
-  level: 'info',
-  message: '测试消息：前端通话流程测试页发送',
 })
 
 const callerActions = [
-  { label: '挂断 hangup', value: 'hangup' },
-  { label: '取消 cancelled', value: 'cancelled' },
+  { label: '挂断', value: 'hangup' },
+  { label: '取消', value: 'cancelled' },
 ]
 
 const calleeActions = [
-  { label: '接听 answered', value: 'answered' },
-  { label: '拒绝 rejected', value: 'rejected' },
-  { label: '挂断 hangup', value: 'hangup' },
-  { label: '超时 timeout', value: 'timeout' },
+  { label: '接听', value: 'answered' },
+  { label: '拒绝', value: 'rejected' },
+  { label: '挂断', value: 'hangup' },
+  { label: '超时', value: 'timeout' },
 ]
-
-const mqttTopicHints = computed(() => {
-  const deviceId = form.deviceId || '{device_id}'
-  return [
-    `calls/request/${deviceId}`,
-    `devices/${deviceId}/calls/control`,
-    `devices/${deviceId}/status`,
-    'users/{user_id}/calls/incoming',
-    'users/{user_id}/calls/control',
-    `system/${messageForm.type || '{message_type}'}`,
-  ]
-})
 
 const appendLog = (title, detail = '') => {
   logs.value.unshift({
@@ -71,6 +48,83 @@ const extractList = (payload) => {
   return []
 }
 
+const ensureHouseholdSelectionValid = () => {
+  if (!form.householdNumber) return
+  const exists = householdOptions.value.some((item) => item.household_number === form.householdNumber)
+  if (!exists) {
+    form.householdNumber = ''
+  }
+}
+
+const getSelectedDevice = (deviceId) => deviceOptions.value.find((item) => String(item.id) === String(deviceId))
+
+const getSelectedDeviceBuildingID = (deviceId) => {
+  const device = getSelectedDevice(deviceId)
+  if (!device) return ''
+  return String(device.building_id || device.building?.id || '').trim()
+}
+
+const loadHouseholdsByDevice = async (deviceId) => {
+  if (!deviceId) {
+    householdOptions.value = [...allHouseholdOptions.value]
+    ensureHouseholdSelectionValid()
+    return
+  }
+
+  try {
+    const buildingID = getSelectedDeviceBuildingID(deviceId)
+
+    if (buildingID) {
+      const resp = await buildingAPI.getBuildingHouseholds(buildingID)
+      const list = extractList(resp)
+      if (list.length > 0) {
+        householdOptions.value = list
+        ensureHouseholdSelectionValid()
+        return
+      }
+    }
+
+    const deviceResp = await deviceAPI.getDeviceHouseholds(deviceId)
+    const deviceHouseholds = extractList(deviceResp)
+    householdOptions.value = deviceHouseholds.length > 0 ? deviceHouseholds : [...allHouseholdOptions.value]
+    ensureHouseholdSelectionValid()
+  } catch (error) {
+    console.error(error)
+    householdOptions.value = [...allHouseholdOptions.value]
+    ensureHouseholdSelectionValid()
+    appendLog('设备户号加载失败', '按楼栋加载失败，已回退到全部户号')
+  }
+}
+
+const currentCallId = computed(() => form.callId || sessionInfo.value?.call_id || '')
+
+const requireCallId = () => {
+  if (!currentCallId.value) {
+    ElMessage.warning('请先发起通话，系统会自动生成 call_id')
+    return ''
+  }
+  if (!form.callId) {
+    form.callId = currentCallId.value
+  }
+  return currentCallId.value
+}
+
+const copyCallId = async () => {
+  const callId = currentCallId.value
+  if (!callId) {
+    ElMessage.warning('当前没有可复制的 call_id')
+    return
+  }
+
+  try {
+    await navigator.clipboard.writeText(callId)
+    ElMessage.success('call_id 已复制')
+  } catch (error) {
+    console.error(error)
+    ElMessage.error('复制失败，请手动复制')
+  }
+}
+
 const initOptions = async () => {
   loading.value = true
   try {
@@ -80,7 +134,8 @@ const initOptions = async () => {
     ])
 
     deviceOptions.value = extractList(deviceResp)
-    householdOptions.value = extractList(householdResp)
+    allHouseholdOptions.value = extractList(householdResp)
+    householdOptions.value = [...allHouseholdOptions.value]
 
     if (!form.deviceId && deviceOptions.value.length > 0) {
       form.deviceId = String(deviceOptions.value[0].id)
@@ -112,7 +167,7 @@ const initiateCall = async () => {
   loading.value = true
   try {
     const resp = await mqttAPI.initiateCall(callPayload.value)
-    lastResponse.value = resp
+    initiateResponse.value = resp
     form.callId = resp?.data?.call_id || form.callId
     appendLog('发起通话成功', `call_id=${form.callId || 'N/A'}`)
     ElMessage.success('发起通话成功')
@@ -125,15 +180,13 @@ const initiateCall = async () => {
 }
 
 const fetchSession = async () => {
-  if (!form.callId) {
-    ElMessage.warning('请先输入或生成 call_id')
-    return
-  }
+  const callId = requireCallId()
+  if (!callId) return
+
   loading.value = true
   try {
-    const resp = await mqttAPI.getSession(form.callId)
+    const resp = await mqttAPI.getSession(callId)
     sessionInfo.value = resp?.data || null
-    lastResponse.value = resp
     appendLog('获取会话成功', `status=${sessionInfo.value?.status || 'unknown'}`)
   } catch (error) {
     console.error(error)
@@ -143,23 +196,22 @@ const fetchSession = async () => {
   }
 }
 
-const postCallerAction = async () => {
-  if (!form.callId) {
-    ElMessage.warning('请先输入 call_id')
-    return
-  }
+const postCallerAction = async (action) => {
+  const callId = requireCallId()
+  if (!callId) return
+
   loading.value = true
   try {
     const resp = await mqttAPI.callerAction({
-      call_info: {
-        call_id: form.callId,
-        action: form.callerAction,
-        reason: form.actionReason || undefined,
-        timestamp: Date.now(),
-      },
+      call_id: callId,
+      action,
+      timestamp: Date.now(),
     })
-    lastResponse.value = resp
-    appendLog('呼叫方动作已发送', form.callerAction)
+    callerResponse.value = {
+      action,
+      response: resp,
+    }
+    appendLog('呼叫方动作已发送', action)
     ElMessage.success('呼叫方动作发送成功')
   } catch (error) {
     console.error(error)
@@ -169,23 +221,22 @@ const postCallerAction = async () => {
   }
 }
 
-const postCalleeAction = async () => {
-  if (!form.callId) {
-    ElMessage.warning('请先输入 call_id')
-    return
-  }
+const postCalleeAction = async (action) => {
+  const callId = requireCallId()
+  if (!callId) return
+
   loading.value = true
   try {
     const resp = await mqttAPI.calleeAction({
-      call_info: {
-        call_id: form.callId,
-        action: form.calleeAction,
-        reason: form.actionReason || undefined,
-        timestamp: Date.now(),
-      },
+      call_id: callId,
+      action,
+      timestamp: Date.now(),
     })
-    lastResponse.value = resp
-    appendLog('被叫方动作已发送', form.calleeAction)
+    calleeResponse.value = {
+      action,
+      response: resp,
+    }
+    appendLog('被叫方动作已发送', action)
     ElMessage.success('被叫方动作发送成功')
   } catch (error) {
     console.error(error)
@@ -196,15 +247,17 @@ const postCalleeAction = async () => {
 }
 
 const endSession = async () => {
-  if (!form.callId) {
-    ElMessage.warning('请先输入 call_id')
-    return
-  }
+  const callId = requireCallId()
+  if (!callId) return
+
   loading.value = true
   try {
-    const resp = await mqttAPI.endSession({ call_id: form.callId, reason: 'manual_test_end' })
-    lastResponse.value = resp
-    appendLog('结束会话成功', form.callId)
+    const resp = await mqttAPI.endSession({ call_id: callId, reason: 'manual_test_end' })
+    calleeResponse.value = {
+      action: 'end_session',
+      response: resp,
+    }
+    appendLog('结束会话成功', callId)
     ElMessage.success('结束会话成功')
   } catch (error) {
     console.error(error)
@@ -214,53 +267,16 @@ const endSession = async () => {
   }
 }
 
-const publishDeviceStatus = async () => {
-  if (!form.deviceId) {
-    ElMessage.warning('请先选择设备')
-    return
-  }
-  loading.value = true
-  try {
-    const resp = await mqttAPI.publishDeviceStatus({
-      device_id: String(form.deviceId),
-      online: statusForm.online,
-      battery: Number(statusForm.battery),
-      properties: { firmware_version: statusForm.firmwareVersion },
-    })
-    lastResponse.value = resp
-    appendLog('设备状态已发布', `online=${statusForm.online}, battery=${statusForm.battery}`)
-    ElMessage.success('设备状态发布成功')
-  } catch (error) {
-    console.error(error)
-    appendLog('设备状态发布失败', error?.message || 'unknown error')
-  } finally {
-    loading.value = false
-  }
-}
-
-const publishSystemMessage = async () => {
-  loading.value = true
-  try {
-    const resp = await mqttAPI.publishSystemMessage({
-      type: messageForm.type,
-      level: messageForm.level,
-      message: messageForm.message,
-      timestamp: Date.now(),
-    })
-    lastResponse.value = resp
-    appendLog('系统消息已发布', `${messageForm.type}/${messageForm.level}`)
-    ElMessage.success('系统消息发布成功')
-  } catch (error) {
-    console.error(error)
-    appendLog('系统消息发布失败', error?.message || 'unknown error')
-  } finally {
-    loading.value = false
-  }
-}
-
 onMounted(() => {
   initOptions()
 })
+
+watch(
+  () => form.deviceId,
+  async (deviceId) => {
+    await loadHouseholdsByDevice(deviceId)
+  },
+)
 </script>
 
 <template>
@@ -275,7 +291,7 @@ onMounted(() => {
     <div class="grid grid-cols-1 gap-5 xl:grid-cols-3">
       <section class="space-y-5 xl:col-span-2">
         <div class="app-surface p-5">
-          <h3 class="app-panel-title">测试参数</h3>
+          <h3 class="app-panel-title">模块 1：发起通话卡片</h3>
           <div class="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
             <el-select
               v-model="form.deviceId"
@@ -305,40 +321,21 @@ onMounted(() => {
               />
             </el-select>
 
-            <el-input
-              v-model="form.callId"
-              placeholder="call_id（发起通话后自动回填）"
-              clearable
-            />
-            <el-input
-              v-model="form.actionReason"
-              placeholder="动作原因（可选）"
-              clearable
-            />
-
-            <el-select
-              v-model="form.callerAction"
-              placeholder="呼叫方动作"
-            >
-              <el-option
-                v-for="item in callerActions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
-            </el-select>
-
-            <el-select
-              v-model="form.calleeAction"
-              placeholder="被叫方动作"
-            >
-              <el-option
-                v-for="item in calleeActions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
-            </el-select>
+            <div class="app-inline-card md:col-span-2">
+              <div class="flex items-center justify-between gap-3">
+                <div class="min-w-0 flex-1">
+                  <p class="text-xs text-text-secondary">当前 call_id</p>
+                  <p class="mt-1 break-all font-mono text-sm text-text-primary">
+                    {{ currentCallId || '-' }}
+                  </p>
+                </div>
+                <el-button
+                  class="app-button app-button-secondary"
+                  :disabled="!currentCallId"
+                  @click="copyCallId"
+                >一键复制 call_id</el-button>
+              </div>
+            </div>
           </div>
 
           <div class="app-action-row">
@@ -353,128 +350,67 @@ onMounted(() => {
               :loading="loading"
               @click="fetchSession"
             >查询会话</el-button>
+          </div>
+        </div>
+
+        <div class="app-surface p-5">
+          <h3 class="app-panel-title">模块 2：呼叫端控制卡片</h3>
+          <div class="app-action-row">
             <el-button
+              v-for="item in callerActions"
+              :key="item.value"
               type="warning"
               class="app-button app-button-warning"
               :loading="loading"
-              @click="postCallerAction"
-            >呼叫方动作</el-button>
+              :disabled="!currentCallId"
+              @click="postCallerAction(item.value)"
+            >{{ item.label }}</el-button>
+          </div>
+        </div>
+
+        <div class="app-surface p-5">
+          <h3 class="app-panel-title">模块 3：被呼叫端控制卡片</h3>
+          <div class="app-action-row">
             <el-button
+              v-for="item in calleeActions"
+              :key="item.value"
               type="warning"
               plain
               class="app-button app-button-ghost"
               :loading="loading"
-              @click="postCalleeAction"
-            >被叫方动作</el-button>
+              :disabled="!currentCallId"
+              @click="postCalleeAction(item.value)"
+            >{{ item.label }}</el-button>
             <el-button
               type="danger"
               class="app-button app-button-danger"
               :loading="loading"
+              :disabled="!currentCallId"
               @click="endSession"
             >结束会话</el-button>
-          </div>
-        </div>
-
-        <div class="app-surface p-5">
-          <h3 class="app-panel-title">通信信息卡片</h3>
-          <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
-            <div class="app-inline-card">
-              <p class="text-xs text-text-secondary">当前 call_id</p>
-              <p class="mt-1 break-all font-mono text-sm text-text-primary">
-                {{ form.callId || '-' }}</p>
-            </div>
-            <div class="app-inline-card">
-              <p class="text-xs text-text-secondary">会话状态</p>
-              <p class="mt-1 text-sm font-medium text-text-primary">
-                {{ sessionInfo?.status || '-' }}</p>
-            </div>
-            <div class="app-inline-card md:col-span-2">
-              <p class="text-xs text-text-secondary">MQTT 主题提示（用于核对流程）</p>
-              <ul class="mt-2 space-y-1 font-mono text-xs text-text-primary">
-                <li
-                  v-for="topic in mqttTopicHints"
-                  :key="topic"
-                >{{ topic }}</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <div class="app-surface p-5">
-          <h3 class="app-panel-title">附加测试：设备状态与系统消息</h3>
-          <div class="mt-4 grid grid-cols-1 gap-3 md:grid-cols-3">
-            <el-switch
-              v-model="statusForm.online"
-              inline-prompt
-              active-text="在线"
-              inactive-text="离线"
-            />
-            <el-input-number
-              v-model="statusForm.battery"
-              :min="0"
-              :max="100"
-              placeholder="电量"
-            />
-            <el-input
-              v-model="statusForm.firmwareVersion"
-              placeholder="固件版本"
-            />
-          </div>
-          <div class="app-action-row mt-3">
-            <el-button
-              type="success"
-              class="app-button app-button-success"
-              :loading="loading"
-              @click="publishDeviceStatus"
-            >发布设备状态</el-button>
-          </div>
-
-          <div class="mt-4 grid grid-cols-1 gap-3 md:grid-cols-3">
-            <el-input
-              v-model="messageForm.type"
-              placeholder="消息类型"
-            />
-            <el-select
-              v-model="messageForm.level"
-              placeholder="级别"
-            >
-              <el-option
-                label="info"
-                value="info"
-              />
-              <el-option
-                label="warning"
-                value="warning"
-              />
-              <el-option
-                label="error"
-                value="error"
-              />
-            </el-select>
-            <el-input
-              v-model="messageForm.message"
-              placeholder="消息内容"
-            />
-          </div>
-          <div class="app-action-row mt-3">
-            <el-button
-              type="success"
-              plain
-              class="app-button app-button-ghost"
-              :loading="loading"
-              @click="publishSystemMessage"
-            >发布系统消息</el-button>
           </div>
         </div>
       </section>
 
       <section class="space-y-5">
         <div class="app-surface p-5">
-          <h3 class="app-panel-title">最后响应</h3>
-          <pre
-            class="app-code-block mt-3 max-h-80 overflow-auto"
-          >{{
-JSON.stringify(lastResponse, null, 2)
+          <h3 class="app-panel-title">发起响应消息</h3>
+          <pre class="app-code-block mt-3 max-h-80 overflow-auto">{{
+JSON.stringify(initiateResponse, null, 2)
+          }}</pre>
+        </div>
+
+        <div class="app-surface p-5">
+          <h3 class="app-panel-title">呼叫端消息卡片</h3>
+          <pre class="app-code-block mt-3 max-h-80 overflow-auto">{{
+JSON.stringify(callerResponse, null, 2)
+          }}</pre>
+        </div>
+
+        <div class="app-surface p-5">
+          <h3 class="app-panel-title">被呼叫端取消通话消息</h3>
+          <pre class="app-code-block mt-3 max-h-80 overflow-auto">{{
+JSON.stringify(calleeResponse, null, 2)
           }}</pre>
         </div>
 
@@ -487,7 +423,8 @@ JSON.stringify(lastResponse, null, 2)
               class="app-inline-card p-2"
             >
               <p class="text-xs text-text-secondary">{{ item.time }}</p>
-              <p class="text-sm font-medium text-text-primary">{{ item.title }}</p>
+              <p class="text-sm font-medium text-text-primary">{{ item.title }}
+              </p>
               <p class="text-xs text-text-secondary">{{ item.detail }}</p>
             </li>
           </ul>
