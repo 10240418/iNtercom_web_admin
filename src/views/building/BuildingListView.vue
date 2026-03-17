@@ -53,47 +53,50 @@
         <p>正在加载楼栋数据...</p>
       </div>
 
-      <el-table
+      <div
         v-else-if="buildingStore.buildingList.length > 0"
-        :data="buildingStore.buildingList"
-        style="width: 100%"
-        @selection-change="handleSelectionChange"
-        table-layout="fixed"
-        stripe
-        :header-cell-style="{ background: 'var(--c-primary-bg)', color: 'var(--c-text-secondary)' }"
+        ref="tableContainerRef"
       >
+        <el-table
+          :data="buildingStore.buildingList"
+          style="width: 100%"
+          @selection-change="handleSelectionChange"
+          table-layout="fixed"
+          stripe
+          :header-cell-style="{ background: 'var(--c-primary-bg)', color: 'var(--c-text-secondary)' }"
+        >
         <el-table-column
           type="selection"
-          width="56"
+          :width="columnWidths.selection"
         />
         <el-table-column
           prop="id"
           label="ID"
-          width="80"
+          :width="columnWidths.id"
           align="center"
         />
         <el-table-column
           prop="building_name"
           label="楼栋名称"
-          min-width="160"
+          :min-width="columnWidths.buildingName"
           show-overflow-tooltip
         />
         <el-table-column
           prop="building_code"
           label="楼栋编码"
-          min-width="140"
+          :min-width="columnWidths.buildingCode"
           show-overflow-tooltip
         />
         <el-table-column
           prop="address"
           label="地址"
-          min-width="220"
+          :min-width="columnWidths.address"
           show-overflow-tooltip
         />
         <el-table-column
           prop="status"
           label="状态"
-          width="120"
+          :width="columnWidths.status"
         >
           <template #default="{ row }">
             <el-tag
@@ -103,7 +106,7 @@
         <el-table-column
           prop="created_at"
           label="创建时间"
-          min-width="180"
+          :min-width="columnWidths.createdAt"
           show-overflow-tooltip
         >
           <template #default="{ row }">
@@ -112,7 +115,7 @@
         </el-table-column>
         <el-table-column
           label="操作"
-          width="160"
+          :width="columnWidths.actions"
           fixed="right"
         >
           <template #default="{ row }">
@@ -132,7 +135,8 @@
             </div>
           </template>
         </el-table-column>
-      </el-table>
+        </el-table>
+      </div>
 
       <div
         v-else
@@ -173,6 +177,7 @@ import { useBuildingStore } from '@/stores/building.js'
 import { formatDateTime } from '@/utils/index.js'
 import { useListAutoRefresh } from '@/composables/useListAutoRefresh.js'
 import { useListPagination } from '@/composables/useListPagination.js'
+import { useResponsiveColumnWidths } from '@/composables/useResponsiveColumnWidths.js'
 import { TableActionButtons, TablePagination } from '@/components/table'
 import ListCardHeader from '@/page/button/ListCardHeader.vue'
 import BuildingFormDialog from './components/BuildingFormDialog.vue'
@@ -182,6 +187,22 @@ const selectedIds = ref([])
 const dialogVisible = ref(false)
 const isEdit = ref(false)
 const currentBuilding = ref({})
+
+const columnWidthPercents = {
+  selection: { percent: 5, min: 56 },
+  id: { percent: 6, min: 80 },
+  buildingName: { percent: 16, min: 170 },
+  buildingCode: { percent: 14, min: 150 },
+  address: { percent: 22, min: 240 },
+  status: { percent: 10, min: 120 },
+  createdAt: { percent: 15, min: 180 },
+  actions: { percent: 18, min: 220 },
+}
+
+const {
+  tableContainerRef,
+  columnWidths,
+} = useResponsiveColumnWidths(columnWidthPercents)
 
 const getStatusLabel = (status) => (status === 'active' ? '启用' : '停用')
 

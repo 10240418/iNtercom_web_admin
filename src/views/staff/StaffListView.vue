@@ -40,96 +40,98 @@
         />
       </template>
 
-      <el-table
-        v-loading="staffStore.loading"
-        :data="staffStore.staffList"
-        style="width: 100%"
-        @selection-change="handleSelectionChange"
-        table-layout="fixed"
-        stripe
-        :header-cell-style="{ background: 'var(--c-primary-bg)', color: 'var(--c-text-secondary)' }"
-      >
-        <el-table-column
-          type="selection"
-          width="56"
-        />
-
-        <el-table-column
-          prop="id"
-          label="ID"
-          width="80"
-          align="center"
-        />
-
-        <el-table-column
-          prop="username"
-          label="用户名"
-          min-width="160"
-          show-overflow-tooltip
+      <div ref="tableContainerRef">
+        <el-table
+          v-loading="staffStore.loading"
+          :data="staffStore.staffList"
+          style="width: 100%"
+          @selection-change="handleSelectionChange"
+          table-layout="fixed"
+          stripe
+          :header-cell-style="{ background: 'var(--c-primary-bg)', color: 'var(--c-text-secondary)' }"
         >
-          <template #default="{ row }">{{ row.username || '-' }}</template>
-        </el-table-column>
+          <el-table-column
+            type="selection"
+            :width="columnWidths.selection"
+          />
 
-        <el-table-column
-          label="邮箱"
-          min-width="160"
-          show-overflow-tooltip
-        >
-          <template #default>--</template>
-        </el-table-column>
+          <el-table-column
+            prop="id"
+            label="ID"
+            :width="columnWidths.id"
+            align="center"
+          />
 
-        <el-table-column
-          prop="phone"
-          label="电话"
-          min-width="160"
-          show-overflow-tooltip
-        />
+          <el-table-column
+            prop="username"
+            label="用户名"
+            :min-width="columnWidths.username"
+            show-overflow-tooltip
+          >
+            <template #default="{ row }">{{ row.username || '-' }}</template>
+          </el-table-column>
 
-        <el-table-column
-          prop="role"
-          label="角色"
-          min-width="120"
-          show-overflow-tooltip
-        >
-          <template #default="{ row }">
-            <el-tag
-              :type="getRoleTagType(row.role)">{{ getRoleLabel(row.role) }}</el-tag>
-          </template>
-        </el-table-column>
+          <el-table-column
+            label="邮箱"
+            :min-width="columnWidths.email"
+            show-overflow-tooltip
+          >
+            <template #default>--</template>
+          </el-table-column>
 
-        <el-table-column
-          prop="created_at"
-          label="创建时间"
-          min-width="180"
-          show-overflow-tooltip
-        >
-          <template
-            #default="{ row }">{{ formatDateTime(row.created_at) }}</template>
-        </el-table-column>
+          <el-table-column
+            prop="phone"
+            label="电话"
+            :min-width="columnWidths.phone"
+            show-overflow-tooltip
+          />
 
-        <el-table-column
-          label="操作"
-          width="160"
-          fixed="right"
-        >
-          <template #default="{ row }">
-            <div class="table-op-buttons">
-              <el-button
-                size="small"
-                type="primary"
-                plain
-                @click="handleEdit(row)"
-              >编辑</el-button>
-              <el-button
-                size="small"
-                type="danger"
-                plain
-                @click="handleDelete(row)"
-              >删除</el-button>
-            </div>
-          </template>
-        </el-table-column>
-      </el-table>
+          <el-table-column
+            prop="role"
+            label="角色"
+            :min-width="columnWidths.role"
+            show-overflow-tooltip
+          >
+            <template #default="{ row }">
+              <el-tag
+                :type="getRoleTagType(row.role)">{{ getRoleLabel(row.role) }}</el-tag>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            prop="created_at"
+            label="创建时间"
+            :min-width="columnWidths.createdAt"
+            show-overflow-tooltip
+          >
+            <template
+              #default="{ row }">{{ formatDateTime(row.created_at) }}</template>
+          </el-table-column>
+
+          <el-table-column
+            label="操作"
+            :width="columnWidths.actions"
+            fixed="right"
+          >
+            <template #default="{ row }">
+              <div class="table-op-buttons">
+                <el-button
+                  size="small"
+                  type="primary"
+                  plain
+                  @click="handleEdit(row)"
+                >编辑</el-button>
+                <el-button
+                  size="small"
+                  type="danger"
+                  plain
+                  @click="handleDelete(row)"
+                >删除</el-button>
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
 
       <div
         v-if="!staffStore.loading && !staffStore.hasStaffs"
@@ -293,6 +295,7 @@ import { formatDateTime } from '@/utils/index.js'
 import { useStaffStore } from '@/stores/staff.js'
 import { useListAutoRefresh } from '@/composables/useListAutoRefresh.js'
 import { useListPagination } from '@/composables/useListPagination.js'
+import { useResponsiveColumnWidths } from '@/composables/useResponsiveColumnWidths.js'
 import { TableActionButtons, TablePagination } from '@/components/table'
 import ListCardHeader from '@/page/button/ListCardHeader.vue'
 
@@ -304,6 +307,24 @@ const isEdit = ref(false)
 const editingId = ref(null)
 const formRef = ref(null)
 const submitting = ref(false)
+
+const columnWidthPercents = {
+  selection: { percent: 5, min: 56 },
+  id: { percent: 5, min: 80 },
+  username: { percent: 15, min: 160 },
+  email: { percent: 15, min: 170 },
+  phone: { percent: 15, min: 160 },
+  role: { percent: 10, min: 120 },
+  createdAt: { percent: 10, min: 180 },
+  actions: { percent: 20, min: 220 },
+}
+
+
+const {
+  tableContainerRef,
+  columnWidths,
+} = useResponsiveColumnWidths(columnWidthPercents)
+
 
 const formData = reactive({
   username: '',

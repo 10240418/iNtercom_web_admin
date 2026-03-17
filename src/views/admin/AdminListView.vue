@@ -39,31 +39,32 @@
           @refresh="refreshAdminData"
         />
       </template>
-      <el-table
-        v-loading="adminStore.loading"
-        :data="adminStore.adminList"
-        style="width: 100%"
-        @selection-change="handleSelectionChange"
-        table-layout="fixed"
-        stripe
-        :header-cell-style="{ background: 'var(--c-primary-bg)', color: 'var(--c-text-secondary)' }"
-      >
+      <div ref="tableContainerRef">
+        <el-table
+          v-loading="adminStore.loading"
+          :data="adminStore.adminList"
+          style="width: 100%"
+          @selection-change="handleSelectionChange"
+          table-layout="fixed"
+          stripe
+          :header-cell-style="{ background: 'var(--c-primary-bg)', color: 'var(--c-text-secondary)' }"
+        >
         <el-table-column
           type="selection"
-          width="56"
+          :width="columnWidths.selection"
         />
 
         <el-table-column
           prop="id"
           label="ID"
-          width="80"
+          :width="columnWidths.id"
           align="center"
         />
 
         <el-table-column
           prop="username"
           label="用户名"
-          min-width="160"
+          :min-width="columnWidths.username"
           show-overflow-tooltip
         >
           <template #default="{ row }">{{ row.username || '-' }}</template>
@@ -72,21 +73,21 @@
         <el-table-column
           prop="email"
           label="邮箱"
-          min-width="160"
+          :min-width="columnWidths.email"
           show-overflow-tooltip
         />
 
         <el-table-column
           prop="phone"
           label="电话"
-          min-width="160"
+          :min-width="columnWidths.phone"
           show-overflow-tooltip
         />
 
         <el-table-column
           prop="role"
           label="角色"
-          min-width="120"
+          :min-width="columnWidths.role"
           show-overflow-tooltip
         >
           <template #default="{ row }">
@@ -99,7 +100,7 @@
         <el-table-column
           prop="created_at"
           label="创建时间"
-          min-width="180"
+          :min-width="columnWidths.createdAt"
           show-overflow-tooltip
         >
           <template
@@ -109,7 +110,7 @@
         <el-table-column
           label="操作"
           fixed="right"
-          width="160"
+          :width="columnWidths.actions"
         >
           <template #default="{ row }">
             <div class="table-op-buttons">
@@ -134,7 +135,8 @@
             </div>
           </template>
         </el-table-column>
-      </el-table>
+        </el-table>
+      </div>
 
       <!-- 空状态 -->
       <div
@@ -190,6 +192,7 @@ import { formatDateTime } from '@/utils/index.js'
 import { USER_ROLE_LABELS } from '@/constants/index.js'
 import { useListAutoRefresh } from '@/composables/useListAutoRefresh.js'
 import { useListPagination } from '@/composables/useListPagination.js'
+import { useResponsiveColumnWidths } from '@/composables/useResponsiveColumnWidths.js'
 import { TableActionButtons, TablePagination } from '@/components/table'
 import ListCardHeader from '@/page/button/ListCardHeader.vue'
 import AdminFormDialog from './components/AdminFormDialog.vue'
@@ -206,6 +209,22 @@ const dialogVisible = ref(false)
 const detailVisible = ref(false)
 const isEdit = ref(false)
 const currentAdmin = ref({})
+
+const columnWidthPercents = {
+  selection: { percent: 5, min: 56 },
+  id: { percent: 6, min: 80 },
+  username: { percent: 16, min: 160 },
+  email: { percent: 18, min: 180 },
+  phone: { percent: 15, min: 160 },
+  role: { percent: 12, min: 120 },
+  createdAt: { percent: 16, min: 180 },
+  actions: { percent: 22, min: 320 },
+}
+
+const {
+  tableContainerRef,
+  columnWidths,
+} = useResponsiveColumnWidths(columnWidthPercents)
 
 /**
  * 新增管理员

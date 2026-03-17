@@ -72,38 +72,41 @@
             <p>正在加载住户数据...</p>
           </div>
 
-          <el-table
+          <div
             v-else-if="householdStore.householdList.length > 0"
-            :data="householdStore.householdList"
-            style="width: 100%"
-            @selection-change="handleSelectionChange"
-            table-layout="fixed"
-            stripe
-            :header-cell-style="{ background: 'var(--c-primary-bg)', color: 'var(--c-text-secondary)' }"
+            ref="householdTableContainerRef"
           >
+            <el-table
+              :data="householdStore.householdList"
+              style="width: 100%"
+              @selection-change="handleSelectionChange"
+              table-layout="fixed"
+              stripe
+              :header-cell-style="{ background: 'var(--c-primary-bg)', color: 'var(--c-text-secondary)' }"
+            >
             <el-table-column
               type="selection"
-              width="55"
+              :width="householdColumnWidths.selection"
             />
 
             <el-table-column
               prop="id"
               label="ID"
-              width="80"
+              :width="householdColumnWidths.id"
               align="center"
             />
 
             <el-table-column
               prop="household_number"
               label="住户号"
-              min-width="140"
+              :min-width="householdColumnWidths.householdNumber"
               show-overflow-tooltip
             />
 
             <el-table-column
               prop="building_id"
               label="所属楼栋"
-              min-width="120"
+              :min-width="householdColumnWidths.building"
               show-overflow-tooltip
             >
               <template
@@ -112,7 +115,7 @@
 
             <el-table-column
               label="居民数量"
-              width="100"
+              :width="householdColumnWidths.residentCount"
               align="center"
             >
               <template #default="{ row }">
@@ -123,7 +126,7 @@
             <el-table-column
               prop="status"
               label="状态"
-              width="100"
+              :width="householdColumnWidths.status"
             >
               <template #default="{ row }">
                 <el-tag
@@ -134,7 +137,7 @@
             <el-table-column
               prop="created_at"
               label="创建时间"
-              min-width="160"
+              :min-width="householdColumnWidths.createdAt"
               show-overflow-tooltip
             >
               <template
@@ -144,7 +147,7 @@
             <el-table-column
               label="操作"
               fixed="right"
-              width="340"
+              :width="householdColumnWidths.actions"
             >
               <template #default="{ row }">
                 <div class="action-buttons table-op-buttons">
@@ -187,7 +190,8 @@
                 </div>
               </template>
             </el-table-column>
-          </el-table>
+            </el-table>
+          </div>
 
           <div
             v-else
@@ -243,46 +247,49 @@
             <p>正在加载居民数据...</p>
           </div>
 
-          <el-table
+          <div
             v-else-if="householdStore.residentList.length > 0"
-            :data="householdStore.residentList"
-            style="width: 100%"
-            table-layout="fixed"
-            stripe
-            :header-cell-style="{ background: 'var(--c-primary-bg)', color: 'var(--c-text-secondary)' }"
+            ref="residentTableContainerRef"
           >
+            <el-table
+              :data="householdStore.residentList"
+              style="width: 100%"
+              table-layout="fixed"
+              stripe
+              :header-cell-style="{ background: 'var(--c-primary-bg)', color: 'var(--c-text-secondary)' }"
+            >
             <el-table-column
               prop="id"
               label="ID"
-              width="80"
+              :width="residentColumnWidths.id"
               align="center"
             />
 
             <el-table-column
               prop="name"
               label="姓名"
-              min-width="120"
+              :min-width="residentColumnWidths.name"
               show-overflow-tooltip
             />
 
             <el-table-column
               prop="phone"
               label="电话"
-              min-width="140"
+              :min-width="residentColumnWidths.phone"
               show-overflow-tooltip
             />
 
             <el-table-column
               prop="email"
               label="邮箱"
-              min-width="180"
+              :min-width="residentColumnWidths.email"
               show-overflow-tooltip
             />
 
             <el-table-column
               prop="household_id"
               label="所属住户"
-              min-width="100"
+              :min-width="residentColumnWidths.household"
             >
               <template #default="{ row }">
                 <el-tag
@@ -293,7 +300,7 @@
             <el-table-column
               prop="created_at"
               label="创建时间"
-              min-width="160"
+              :min-width="residentColumnWidths.createdAt"
               show-overflow-tooltip
             >
               <template
@@ -303,7 +310,7 @@
             <el-table-column
               label="操作"
               fixed="right"
-              width="260"
+              :width="residentColumnWidths.actions"
             >
               <template #default="{ row }">
                 <div class="action-buttons table-op-buttons">
@@ -337,7 +344,8 @@
                 </div>
               </template>
             </el-table-column>
-          </el-table>
+            </el-table>
+          </div>
 
           <div
             v-else
@@ -418,6 +426,7 @@ import { formatDateTime } from '@/utils/index.js'
 import { COMMON_STATUS_LABELS, COMMON_STATUS_COLORS } from '@/constants/index.js'
 import { useListAutoRefresh } from '@/composables/useListAutoRefresh.js'
 import { useListPagination } from '@/composables/useListPagination.js'
+import { useResponsiveColumnWidths } from '@/composables/useResponsiveColumnWidths.js'
 import { TableActionButtons, TablePagination } from '@/components/table'
 import ListCardHeader from '@/page/button/ListCardHeader.vue'
 import HouseholdFormDialog from './components/HouseholdFormDialog.vue'
@@ -448,6 +457,37 @@ const isEditResident = ref(false)
 
 const currentHousehold = ref({})
 const currentResident = ref({})
+
+const householdColumnWidthPercents = {
+  selection: { percent: 4, min: 55 },
+  id: { percent: 6, min: 80 },
+  householdNumber: { percent: 14, min: 150 },
+  building: { percent: 12, min: 140 },
+  residentCount: { percent: 10, min: 120 },
+  status: { percent: 9, min: 110 },
+  createdAt: { percent: 13, min: 170 },
+  actions: { percent: 32, min: 380 },
+}
+
+const residentColumnWidthPercents = {
+  id: { percent: 7, min: 80 },
+  name: { percent: 12, min: 130 },
+  phone: { percent: 14, min: 150 },
+  email: { percent: 20, min: 200 },
+  household: { percent: 11, min: 120 },
+  createdAt: { percent: 14, min: 170 },
+  actions: { percent: 22, min: 300 },
+}
+
+const {
+  tableContainerRef: householdTableContainerRef,
+  columnWidths: householdColumnWidths,
+} = useResponsiveColumnWidths(householdColumnWidthPercents)
+
+const {
+  tableContainerRef: residentTableContainerRef,
+  columnWidths: residentColumnWidths,
+} = useResponsiveColumnWidths(residentColumnWidthPercents)
 
 /**
  * 标签页切换

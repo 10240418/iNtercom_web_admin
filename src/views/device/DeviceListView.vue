@@ -40,30 +40,31 @@
         />
       </template>
 
-      <el-table
-        v-loading="loading"
-        :data="deviceList"
-        style="width: 100%"
-        @selection-change="handleSelectionChange"
-        table-layout="fixed"
-        stripe
-        :header-cell-style="{ background: 'var(--c-primary-bg)', color: 'var(--c-text-secondary)' }"
-      >
+      <div ref="tableContainerRef">
+        <el-table
+          v-loading="loading"
+          :data="deviceList"
+          style="width: 100%"
+          @selection-change="handleSelectionChange"
+          table-layout="fixed"
+          stripe
+          :header-cell-style="{ background: 'var(--c-primary-bg)', color: 'var(--c-text-secondary)' }"
+        >
         <el-table-column
           type="selection"
-          width="55"
+          :width="columnWidths.selection"
         />
 
         <el-table-column
           prop="id"
           label="ID"
-          width="80"
+          :width="columnWidths.id"
         />
 
         <el-table-column
           prop="name"
           label="设备名称"
-          min-width="120"
+          :min-width="columnWidths.name"
         >
           <template #default="{ row }">
             <el-tag type="primary">{{ row.name }}</el-tag>
@@ -73,7 +74,7 @@
         <el-table-column
           prop="serial_number"
           label="序列号"
-          min-width="140"
+          :min-width="columnWidths.serialNumber"
           show-overflow-tooltip
         >
           <template #default="{ row }">
@@ -84,14 +85,14 @@
         <el-table-column
           prop="location"
           label="位置"
-          min-width="120"
+          :min-width="columnWidths.location"
           show-overflow-tooltip
         />
 
         <el-table-column
           prop="building"
           label="所属楼栋"
-          min-width="120"
+          :min-width="columnWidths.building"
         >
           <template #default="{ row }">
             <el-tag
@@ -110,7 +111,7 @@
         <el-table-column
           prop="status"
           label="设备状态"
-          min-width="100"
+          :min-width="columnWidths.status"
         >
           <template #default="{ row }">
             <el-tag :type="getStatusTagType(row.status)">
@@ -122,7 +123,7 @@
         <el-table-column
           prop="updated_at"
           label="最后更新"
-          min-width="170"
+          :min-width="columnWidths.updatedAt"
           show-overflow-tooltip
         >
           <template #default="{ row }">
@@ -133,7 +134,7 @@
         <el-table-column
           label="操作"
           fixed="right"
-          width="280"
+          :width="columnWidths.actions"
         >
           <template #default="{ row }">
             <div class="table-op-buttons">
@@ -169,7 +170,8 @@
             </div>
           </template>
         </el-table-column>
-      </el-table>
+        </el-table>
+      </div>
     </el-card>
 
     <TablePagination
@@ -205,6 +207,7 @@ import { formatDateTime } from '@/utils/index.js'
 import { DEVICE_STATUS_LABELS, DEVICE_STATUS_COLORS } from '@/constants/index.js'
 import { useListAutoRefresh } from '@/composables/useListAutoRefresh.js'
 import { useListPagination } from '@/composables/useListPagination.js'
+import { useResponsiveColumnWidths } from '@/composables/useResponsiveColumnWidths.js'
 import { TableActionButtons, TablePagination } from '@/components/table'
 import ListCardHeader from '@/page/button/ListCardHeader.vue'
 import DeviceFormDialog from './components/DeviceFormDialog.vue'
@@ -231,6 +234,23 @@ const dialogVisible = ref(false)
 const detailVisible = ref(false)
 const isEdit = ref(false)
 const currentDevice = ref({})
+
+const columnWidthPercents = {
+  selection: { percent: 4, min: 55 },
+  id: { percent: 6, min: 80 },
+  name: { percent: 12, min: 140 },
+  serialNumber: { percent: 15, min: 170 },
+  location: { percent: 12, min: 140 },
+  building: { percent: 12, min: 140 },
+  status: { percent: 10, min: 120 },
+  updatedAt: { percent: 14, min: 180 },
+  actions: { percent: 25, min: 360 },
+}
+
+const {
+  tableContainerRef,
+  columnWidths,
+} = useResponsiveColumnWidths(columnWidthPercents)
 
 /**
  * 获取设备列表
