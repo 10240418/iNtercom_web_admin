@@ -84,112 +84,113 @@
               stripe
               :header-cell-style="{ background: 'var(--c-primary-bg)', color: 'var(--c-text-secondary)' }"
             >
-            <el-table-column
-              type="selection"
-              :width="householdColumnWidths.selection"
-            />
+              <el-table-column
+                type="selection"
+                :width="householdColumnWidths.selection"
+              />
 
-            <el-table-column
-              prop="id"
-              label="ID"
-              :width="householdColumnWidths.id"
-              align="center"
-            />
+              <el-table-column
+                prop="id"
+                label="ID"
+                :width="householdColumnWidths.id"
+                align="center"
+              />
 
-            <el-table-column
-              prop="household_number"
-              label="住户号"
-              :min-width="householdColumnWidths.householdNumber"
-              show-overflow-tooltip
-            />
+              <el-table-column
+                prop="household_number"
+                label="住户号"
+                :min-width="householdColumnWidths.householdNumber"
+                show-overflow-tooltip
+              />
 
-            <el-table-column
-              prop="building_id"
-              label="所属楼栋"
-              :min-width="householdColumnWidths.building"
-              show-overflow-tooltip
-            >
-              <template
-                #default="{ row }">{{ getBuildingName(row.building_id) }}</template>
-            </el-table-column>
+              <el-table-column
+                prop="building_id"
+                label="所属楼栋"
+                :min-width="householdColumnWidths.building"
+                show-overflow-tooltip
+              >
+                <template
+                  #default="{ row }">{{ getBuildingName(row.building_id) }}</template>
+              </el-table-column>
 
-            <el-table-column
-              label="居民数量"
-              :width="householdColumnWidths.residentCount"
-              align="center"
-            >
-              <template #default="{ row }">
-                <el-tag type="success">{{ getResidentCount(row.id) }}人</el-tag>
-              </template>
-            </el-table-column>
+              <el-table-column
+                label="居民数量"
+                :width="householdColumnWidths.residentCount"
+                align="center"
+              >
+                <template #default="{ row }">
+                  <el-tag
+                    type="success">{{ getResidentCount(row.id) }}人</el-tag>
+                </template>
+              </el-table-column>
 
-            <el-table-column
-              prop="status"
-              label="状态"
-              :width="householdColumnWidths.status"
-            >
-              <template #default="{ row }">
-                <el-tag
-                  :type="getStatusTagType(row.status)">{{ getStatusLabel(row.status) }}</el-tag>
-              </template>
-            </el-table-column>
+              <el-table-column
+                prop="status"
+                label="状态"
+                :width="householdColumnWidths.status"
+              >
+                <template #default="{ row }">
+                  <el-tag
+                    :type="getStatusTagType(row.status)">{{ getStatusLabel(row.status) }}</el-tag>
+                </template>
+              </el-table-column>
 
-            <el-table-column
-              prop="created_at"
-              label="创建时间"
-              :min-width="householdColumnWidths.createdAt"
-              show-overflow-tooltip
-            >
-              <template
-                #default="{ row }">{{ formatDateTime(row.created_at) }}</template>
-            </el-table-column>
+              <el-table-column
+                prop="created_at"
+                label="创建时间"
+                :min-width="householdColumnWidths.createdAt"
+                show-overflow-tooltip
+              >
+                <template
+                  #default="{ row }">{{ formatDateTime(row.created_at) }}</template>
+              </el-table-column>
 
-            <el-table-column
-              label="操作"
-              fixed="right"
-              :width="householdColumnWidths.actions"
-            >
-              <template #default="{ row }">
-                <div class="action-buttons table-op-buttons">
-                  <el-button
-                    size="small"
-                    @click="handleViewHousehold(row)"
-                    :icon="View"
-                    type="info"
-                    plain
-                  >
-                    查看
-                  </el-button>
-                  <el-button
-                    size="small"
-                    @click="handleViewResidents(row)"
-                    :icon="UserFilled"
-                    type="success"
-                    plain
-                  >
-                    居民
-                  </el-button>
-                  <el-button
-                    size="small"
-                    type="primary"
-                    @click="handleEditHousehold(row)"
-                    :icon="Edit"
-                    plain
-                  >
-                    编辑
-                  </el-button>
-                  <el-button
-                    size="small"
-                    type="danger"
-                    @click="handleDeleteHousehold(row)"
-                    :icon="Delete"
-                    plain
-                  >
-                    删除
-                  </el-button>
-                </div>
-              </template>
-            </el-table-column>
+              <el-table-column
+                label="操作"
+                fixed="right"
+                :width="householdColumnWidths.actions"
+              >
+                <template #default="{ row }">
+                  <div class="action-buttons table-op-buttons">
+                    <el-button
+                      size="small"
+                      @click="handleViewHousehold(row)"
+                      :icon="View"
+                      type="info"
+                      plain
+                    >
+                      查看
+                    </el-button>
+                    <el-button
+                      size="small"
+                      @click="handleViewResidents(row)"
+                      :icon="UserFilled"
+                      type="success"
+                      plain
+                    >
+                      居民
+                    </el-button>
+                    <el-button
+                      size="small"
+                      type="primary"
+                      @click="handleEditHousehold(row)"
+                      :icon="Edit"
+                      plain
+                    >
+                      编辑
+                    </el-button>
+                    <el-button
+                      size="small"
+                      type="danger"
+                      @click="handleDeleteHousehold(row)"
+                      :icon="Delete"
+                      plain
+                    >
+                      删除
+                    </el-button>
+                  </div>
+                </template>
+              </el-table-column>
             </el-table>
           </div>
 
@@ -258,92 +259,92 @@
               stripe
               :header-cell-style="{ background: 'var(--c-primary-bg)', color: 'var(--c-text-secondary)' }"
             >
-            <el-table-column
-              prop="id"
-              label="ID"
-              :width="residentColumnWidths.id"
-              align="center"
-            />
+              <el-table-column
+                prop="id"
+                label="ID"
+                :width="residentColumnWidths.id"
+                align="center"
+              />
 
-            <el-table-column
-              prop="name"
-              label="姓名"
-              :min-width="residentColumnWidths.name"
-              show-overflow-tooltip
-            />
+              <el-table-column
+                prop="name"
+                label="姓名"
+                :min-width="residentColumnWidths.name"
+                show-overflow-tooltip
+              />
 
-            <el-table-column
-              prop="phone"
-              label="电话"
-              :min-width="residentColumnWidths.phone"
-              show-overflow-tooltip
-            />
+              <el-table-column
+                prop="phone"
+                label="电话"
+                :min-width="residentColumnWidths.phone"
+                show-overflow-tooltip
+              />
 
-            <el-table-column
-              prop="email"
-              label="邮箱"
-              :min-width="residentColumnWidths.email"
-              show-overflow-tooltip
-            />
+              <el-table-column
+                prop="email"
+                label="邮箱"
+                :min-width="residentColumnWidths.email"
+                show-overflow-tooltip
+              />
 
-            <el-table-column
-              prop="household_id"
-              label="所属住户"
-              :min-width="residentColumnWidths.household"
-            >
-              <template #default="{ row }">
-                <el-tag
-                  type="primary">{{ getHouseholdNumber(row.household_id) }}</el-tag>
-              </template>
-            </el-table-column>
+              <el-table-column
+                prop="household_id"
+                label="所属住户"
+                :min-width="residentColumnWidths.household"
+              >
+                <template #default="{ row }">
+                  <el-tag
+                    type="primary">{{ getHouseholdNumber(row.household_id) }}</el-tag>
+                </template>
+              </el-table-column>
 
-            <el-table-column
-              prop="created_at"
-              label="创建时间"
-              :min-width="residentColumnWidths.createdAt"
-              show-overflow-tooltip
-            >
-              <template
-                #default="{ row }">{{ formatDateTime(row.created_at) }}</template>
-            </el-table-column>
+              <el-table-column
+                prop="created_at"
+                label="创建时间"
+                :min-width="residentColumnWidths.createdAt"
+                show-overflow-tooltip
+              >
+                <template
+                  #default="{ row }">{{ formatDateTime(row.created_at) }}</template>
+              </el-table-column>
 
-            <el-table-column
-              label="操作"
-              fixed="right"
-              :width="residentColumnWidths.actions"
-            >
-              <template #default="{ row }">
-                <div class="action-buttons table-op-buttons">
-                  <el-button
-                    size="small"
-                    @click="handleViewResident(row)"
-                    :icon="View"
-                    type="info"
-                    plain
-                  >
-                    查看
-                  </el-button>
-                  <el-button
-                    size="small"
-                    type="primary"
-                    @click="handleEditResident(row)"
-                    :icon="Edit"
-                    plain
-                  >
-                    编辑
-                  </el-button>
-                  <el-button
-                    size="small"
-                    type="danger"
-                    @click="handleDeleteResident(row)"
-                    :icon="Delete"
-                    plain
-                  >
-                    删除
-                  </el-button>
-                </div>
-              </template>
-            </el-table-column>
+              <el-table-column
+                label="操作"
+                fixed="right"
+                :width="residentColumnWidths.actions"
+              >
+                <template #default="{ row }">
+                  <div class="action-buttons table-op-buttons">
+                    <el-button
+                      size="small"
+                      @click="handleViewResident(row)"
+                      :icon="View"
+                      type="info"
+                      plain
+                    >
+                      查看
+                    </el-button>
+                    <el-button
+                      size="small"
+                      type="primary"
+                      @click="handleEditResident(row)"
+                      :icon="Edit"
+                      plain
+                    >
+                      编辑
+                    </el-button>
+                    <el-button
+                      size="small"
+                      type="danger"
+                      @click="handleDeleteResident(row)"
+                      :icon="Delete"
+                      plain
+                    >
+                      删除
+                    </el-button>
+                  </div>
+                </template>
+              </el-table-column>
             </el-table>
           </div>
 

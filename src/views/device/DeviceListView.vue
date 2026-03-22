@@ -50,126 +50,126 @@
           stripe
           :header-cell-style="{ background: 'var(--c-primary-bg)', color: 'var(--c-text-secondary)' }"
         >
-        <el-table-column
-          type="selection"
-          :width="columnWidths.selection"
-        />
+          <el-table-column
+            type="selection"
+            :width="columnWidths.selection"
+          />
 
-        <el-table-column
-          prop="id"
-          label="ID"
-          :width="columnWidths.id"
-        />
+          <el-table-column
+            prop="id"
+            label="ID"
+            :width="columnWidths.id"
+          />
 
-        <el-table-column
-          prop="name"
-          label="设备名称"
-          :min-width="columnWidths.name"
-        >
-          <template #default="{ row }">
-            <el-tag type="primary">{{ row.name }}</el-tag>
-          </template>
-        </el-table-column>
+          <el-table-column
+            prop="name"
+            label="设备名称"
+            :min-width="columnWidths.name"
+          >
+            <template #default="{ row }">
+              <el-tag type="primary">{{ row.name }}</el-tag>
+            </template>
+          </el-table-column>
 
-        <el-table-column
-          prop="serial_number"
-          label="序列号"
-          :min-width="columnWidths.serialNumber"
-          show-overflow-tooltip
-        >
-          <template #default="{ row }">
-            <el-tag>{{ row.serial_number }}</el-tag>
-          </template>
-        </el-table-column>
+          <el-table-column
+            prop="serial_number"
+            label="序列号"
+            :min-width="columnWidths.serialNumber"
+            show-overflow-tooltip
+          >
+            <template #default="{ row }">
+              <el-tag>{{ row.serial_number }}</el-tag>
+            </template>
+          </el-table-column>
 
-        <el-table-column
-          prop="location"
-          label="位置"
-          :min-width="columnWidths.location"
-          show-overflow-tooltip
-        />
+          <el-table-column
+            prop="location"
+            label="位置"
+            :min-width="columnWidths.location"
+            show-overflow-tooltip
+          />
 
-        <el-table-column
-          prop="building"
-          label="所属楼栋"
-          :min-width="columnWidths.building"
-        >
-          <template #default="{ row }">
-            <el-tag
-              v-if="row.building"
-              type="info"
-            >
-              {{ row.building.building_name }}
-            </el-tag>
-            <span
-              v-else
-              class="text-gray"
-            >未分配</span>
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          prop="status"
-          label="设备状态"
-          :min-width="columnWidths.status"
-        >
-          <template #default="{ row }">
-            <el-tag :type="getStatusTagType(row.status)">
-              {{ getStatusLabel(row.status) }}
-            </el-tag>
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          prop="updated_at"
-          label="最后更新"
-          :min-width="columnWidths.updatedAt"
-          show-overflow-tooltip
-        >
-          <template #default="{ row }">
-            {{ formatDateTime(row.updated_at) }}
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          label="操作"
-          fixed="right"
-          :width="columnWidths.actions"
-        >
-          <template #default="{ row }">
-            <div class="table-op-buttons">
-              <el-button
-                size="small"
-                @click="handleView(row)"
-                :icon="View"
-              > 查看 </el-button>
-              <el-button
-                size="small"
-                type="primary"
-                @click="handleEdit(row)"
-                :icon="Edit"
+          <el-table-column
+            prop="building"
+            label="所属楼栋"
+            :min-width="columnWidths.building"
+          >
+            <template #default="{ row }">
+              <el-tag
+                v-if="row.building"
+                type="info"
               >
-                编辑
-              </el-button>
-              <el-button
-                size="small"
-                type="warning"
-                @click="handleHealthCheck(row)"
-                :icon="Warning"
-              >
-                检测
-              </el-button>
-              <el-button
-                size="small"
-                type="danger"
-                @click="handleDelete(row)"
-                :icon="Delete"
-              >
-                删除
-              </el-button>
-            </div>
-          </template>
-        </el-table-column>
+                {{ row.building.building_name }}
+              </el-tag>
+              <span
+                v-else
+                class="text-gray"
+              >未分配</span>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            prop="status"
+            label="设备状态"
+            :min-width="columnWidths.status"
+          >
+            <template #default="{ row }">
+              <el-tag :type="getStatusTagType(row.status)">
+                {{ getStatusLabel(row.status) }}
+              </el-tag>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            prop="updated_at"
+            label="最后更新"
+            :min-width="columnWidths.updatedAt"
+            show-overflow-tooltip
+          >
+            <template #default="{ row }">
+              {{ formatDateTime(row.updated_at) }}
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            label="操作"
+            fixed="right"
+            :width="columnWidths.actions"
+          >
+            <template #default="{ row }">
+              <div class="table-op-buttons">
+                <el-button
+                  size="small"
+                  @click="handleView(row)"
+                  :icon="View"
+                > 查看 </el-button>
+                <el-button
+                  size="small"
+                  type="primary"
+                  @click="handleEdit(row)"
+                  :icon="Edit"
+                >
+                  编辑
+                </el-button>
+                <el-button
+                  size="small"
+                  type="warning"
+                  @click="handleHealthCheck(row)"
+                  :icon="Warning"
+                >
+                  检测
+                </el-button>
+                <el-button
+                  size="small"
+                  type="danger"
+                  @click="handleDelete(row)"
+                  :icon="Delete"
+                >
+                  删除
+                </el-button>
+              </div>
+            </template>
+          </el-table-column>
         </el-table>
       </div>
     </el-card>

@@ -65,76 +65,76 @@
           stripe
           :header-cell-style="{ background: 'var(--c-primary-bg)', color: 'var(--c-text-secondary)' }"
         >
-        <el-table-column
-          type="selection"
-          :width="columnWidths.selection"
-        />
-        <el-table-column
-          prop="id"
-          label="ID"
-          :width="columnWidths.id"
-          align="center"
-        />
-        <el-table-column
-          prop="building_name"
-          label="楼栋名称"
-          :min-width="columnWidths.buildingName"
-          show-overflow-tooltip
-        />
-        <el-table-column
-          prop="building_code"
-          label="楼栋编码"
-          :min-width="columnWidths.buildingCode"
-          show-overflow-tooltip
-        />
-        <el-table-column
-          prop="address"
-          label="地址"
-          :min-width="columnWidths.address"
-          show-overflow-tooltip
-        />
-        <el-table-column
-          prop="status"
-          label="状态"
-          :width="columnWidths.status"
-        >
-          <template #default="{ row }">
-            <el-tag
-              :type="getStatusTagType(row.status)">{{ getStatusLabel(row.status) }}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="created_at"
-          label="创建时间"
-          :min-width="columnWidths.createdAt"
-          show-overflow-tooltip
-        >
-          <template #default="{ row }">
-            {{ formatDateTime(row.created_at) }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="操作"
-          :width="columnWidths.actions"
-          fixed="right"
-        >
-          <template #default="{ row }">
-            <div class="table-op-buttons">
-              <el-button
-                size="small"
-                type="primary"
-                plain
-                @click="handleEditBuilding(row)"
-              >编辑</el-button>
-              <el-button
-                size="small"
-                type="danger"
-                plain
-                @click="handleDeleteBuilding(row)"
-              >删除</el-button>
-            </div>
-          </template>
-        </el-table-column>
+          <el-table-column
+            type="selection"
+            :width="columnWidths.selection"
+          />
+          <el-table-column
+            prop="id"
+            label="ID"
+            :width="columnWidths.id"
+            align="center"
+          />
+          <el-table-column
+            prop="building_name"
+            label="楼栋名称"
+            :min-width="columnWidths.buildingName"
+            show-overflow-tooltip
+          />
+          <el-table-column
+            prop="building_code"
+            label="楼栋编码"
+            :min-width="columnWidths.buildingCode"
+            show-overflow-tooltip
+          />
+          <el-table-column
+            prop="address"
+            label="地址"
+            :min-width="columnWidths.address"
+            show-overflow-tooltip
+          />
+          <el-table-column
+            prop="status"
+            label="状态"
+            :width="columnWidths.status"
+          >
+            <template #default="{ row }">
+              <el-tag
+                :type="getStatusTagType(row.status)">{{ getStatusLabel(row.status) }}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="created_at"
+            label="创建时间"
+            :min-width="columnWidths.createdAt"
+            show-overflow-tooltip
+          >
+            <template #default="{ row }">
+              {{ formatDateTime(row.created_at) }}
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="操作"
+            :width="columnWidths.actions"
+            fixed="right"
+          >
+            <template #default="{ row }">
+              <div class="table-op-buttons">
+                <el-button
+                  size="small"
+                  type="primary"
+                  plain
+                  @click="handleEditBuilding(row)"
+                >编辑</el-button>
+                <el-button
+                  size="small"
+                  type="danger"
+                  plain
+                  @click="handleDeleteBuilding(row)"
+                >删除</el-button>
+              </div>
+            </template>
+          </el-table-column>
         </el-table>
       </div>
 

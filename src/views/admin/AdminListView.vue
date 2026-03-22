@@ -49,92 +49,92 @@
           stripe
           :header-cell-style="{ background: 'var(--c-primary-bg)', color: 'var(--c-text-secondary)' }"
         >
-        <el-table-column
-          type="selection"
-          :width="columnWidths.selection"
-        />
+          <el-table-column
+            type="selection"
+            :width="columnWidths.selection"
+          />
 
-        <el-table-column
-          prop="id"
-          label="ID"
-          :width="columnWidths.id"
-          align="center"
-        />
+          <el-table-column
+            prop="id"
+            label="ID"
+            :width="columnWidths.id"
+            align="center"
+          />
 
-        <el-table-column
-          prop="username"
-          label="用户名"
-          :min-width="columnWidths.username"
-          show-overflow-tooltip
-        >
-          <template #default="{ row }">{{ row.username || '-' }}</template>
-        </el-table-column>
+          <el-table-column
+            prop="username"
+            label="用户名"
+            :min-width="columnWidths.username"
+            show-overflow-tooltip
+          >
+            <template #default="{ row }">{{ row.username || '-' }}</template>
+          </el-table-column>
 
-        <el-table-column
-          prop="email"
-          label="邮箱"
-          :min-width="columnWidths.email"
-          show-overflow-tooltip
-        />
+          <el-table-column
+            prop="email"
+            label="邮箱"
+            :min-width="columnWidths.email"
+            show-overflow-tooltip
+          />
 
-        <el-table-column
-          prop="phone"
-          label="电话"
-          :min-width="columnWidths.phone"
-          show-overflow-tooltip
-        />
+          <el-table-column
+            prop="phone"
+            label="电话"
+            :min-width="columnWidths.phone"
+            show-overflow-tooltip
+          />
 
-        <el-table-column
-          prop="role"
-          label="角色"
-          :min-width="columnWidths.role"
-          show-overflow-tooltip
-        >
-          <template #default="{ row }">
-            <el-tag :type="getRoleTagType(row.role)">
-              {{ getRoleLabel(row.role) }}
-            </el-tag>
-          </template>
-        </el-table-column>
+          <el-table-column
+            prop="role"
+            label="角色"
+            :min-width="columnWidths.role"
+            show-overflow-tooltip
+          >
+            <template #default="{ row }">
+              <el-tag :type="getRoleTagType(row.role)">
+                {{ getRoleLabel(row.role) }}
+              </el-tag>
+            </template>
+          </el-table-column>
 
-        <el-table-column
-          prop="created_at"
-          label="创建时间"
-          :min-width="columnWidths.createdAt"
-          show-overflow-tooltip
-        >
-          <template
-            #default="{ row }">{{ formatDateTime(row.created_at) }}</template>
-        </el-table-column>
+          <el-table-column
+            prop="created_at"
+            label="创建时间"
+            :min-width="columnWidths.createdAt"
+            show-overflow-tooltip
+          >
+            <template
+              #default="{ row }">{{ formatDateTime(row.created_at) }}</template>
+          </el-table-column>
 
-        <el-table-column
-          label="操作"
-          fixed="right"
-          :width="columnWidths.actions"
-        >
-          <template #default="{ row }">
-            <div class="table-op-buttons">
-              <el-button
-                size="small"
-                type="primary"
-                @click="handleEdit(row)"
-                :icon="Edit"
-                plain
-              >
-                编辑
-              </el-button>
-              <el-button
-                size="small"
-                type="danger"
-                @click="handleDelete(row)"
-                :icon="Delete"
-                plain
-              >
-                删除
-              </el-button>
-            </div>
-          </template>
-        </el-table-column>
+          <el-table-column
+            label="操作"
+            fixed="right"
+            :width="columnWidths.actions"
+          >
+            <template #default="{ row }">
+              <div class="table-op-buttons">
+                <el-button
+                  size="small"
+                  type="primary"
+                  @click="handleEdit(row)"
+                  :icon="Edit"
+                  plain
+                >
+                  编辑
+                </el-button>
+                <el-button
+                  size="small"
+                  type="danger"
+                  @click="handleDelete(row)"
+                  :icon="Delete"
+                  plain
+                >
+                  删除
+                </el-button>
+              </div>
+            </template>
+          </el-table-column>
         </el-table>
       </div>
 
