@@ -484,7 +484,6 @@ const handleSubmit = async () => {
     }
 
     dialogVisible.value = false
-    await refreshStaffData()
   } catch (error) {
     if (error?.message) {
       ElMessage.error(error.message)

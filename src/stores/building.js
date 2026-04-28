@@ -55,7 +55,6 @@ export const useBuildingStore = defineStore('building', {
      */
     async fetchBuildingList(params = {}) {
       try {
-        console.log('BuildingStore fetchBuildingList开始')
         this.loading = true
 
         const queryParams = {
@@ -64,27 +63,16 @@ export const useBuildingStore = defineStore('building', {
           search: params.search || this.searchKeyword || undefined,
         }
 
-        console.log('楼栋请求参数:', queryParams)
-
         const response = await buildingAPI.getBuildingList(queryParams)
-        console.log('楼栋API响应原始数据:', response)
-
-        // 正确解析嵌套的数据结构
         const responseData = response.data
-        console.log('楼栋解析后的responseData:', responseData)
-
         this.buildingList = Array.isArray(responseData.data) ? responseData.data : (responseData.data?.data || [])
-        console.log('设置buildingList:', this.buildingList)
 
-        // 更新分页信息
         this.pagination = {
           page: responseData.page || 1,
           pageSize: responseData.page_size || 10,
           total: responseData.total || 0,
           totalPages: responseData.total_pages || 0,
         }
-
-        console.log('楼栋更新分页信息:', this.pagination)
 
         return response
       } catch (error) {
@@ -98,11 +86,6 @@ export const useBuildingStore = defineStore('building', {
         throw error
       } finally {
         this.loading = false
-        console.log('BuildingStore fetchBuildingList完成，最终状态:', {
-          buildingList: this.buildingList,
-          buildingCount: this.buildingList.length,
-          hasBuildings: this.buildingList.length > 0
-        })
       }
     },
 
@@ -136,8 +119,7 @@ export const useBuildingStore = defineStore('building', {
     async createBuilding(buildingData) {
       try {
         const response = await buildingAPI.createBuilding(buildingData)
-        // 重新获取列表
-        await this.fetchBuildingList()
+        void this.fetchBuildingList()
         return response
       } catch (error) {
         console.error('创建楼栋失败:', error)
@@ -153,8 +135,7 @@ export const useBuildingStore = defineStore('building', {
     async updateBuilding(id, buildingData) {
       try {
         const response = await buildingAPI.updateBuilding(id, buildingData)
-        // 重新获取列表
-        await this.fetchBuildingList()
+        void this.fetchBuildingList()
         return response
       } catch (error) {
         console.error('更新楼栋失败:', error)
@@ -169,8 +150,7 @@ export const useBuildingStore = defineStore('building', {
     async deleteBuilding(id) {
       try {
         const response = await buildingAPI.deleteBuilding(id)
-        // 重新获取列表
-        await this.fetchBuildingList()
+        void this.fetchBuildingList()
         return response
       } catch (error) {
         console.error('删除楼栋失败:', error)
@@ -185,8 +165,7 @@ export const useBuildingStore = defineStore('building', {
     async batchDeleteBuildings(ids) {
       try {
         const response = await buildingAPI.batchDeleteBuildings(ids)
-        // 重新获取列表
-        await this.fetchBuildingList()
+        void this.fetchBuildingList()
         return response
       } catch (error) {
         console.error('批量删除楼栋失败:', error)

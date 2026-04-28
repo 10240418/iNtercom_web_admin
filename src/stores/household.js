@@ -211,8 +211,7 @@ export const useHouseholdStore = defineStore('household', {
     async createHousehold(householdData) {
       try {
         const response = await householdAPI.createHousehold(householdData)
-        // 重新获取列表
-        await this.fetchHouseholdList()
+        void this.fetchHouseholdList()
         return response
       } catch (error) {
         console.error('创建住户失败:', error)
@@ -228,8 +227,7 @@ export const useHouseholdStore = defineStore('household', {
     async updateHousehold(id, householdData) {
       try {
         const response = await householdAPI.updateHousehold(id, householdData)
-        // 重新获取列表
-        await this.fetchHouseholdList()
+        void this.fetchHouseholdList()
         return response
       } catch (error) {
         console.error('更新住户失败:', error)
@@ -244,8 +242,7 @@ export const useHouseholdStore = defineStore('household', {
     async deleteHousehold(id) {
       try {
         const response = await householdAPI.deleteHousehold(id)
-        // 重新获取列表
-        await this.fetchHouseholdList()
+        void this.fetchHouseholdList()
         return response
       } catch (error) {
         console.error('删除住户失败:', error)
@@ -260,8 +257,7 @@ export const useHouseholdStore = defineStore('household', {
     async createResident(residentData) {
       try {
         const response = await residentAPI.createResident(residentData)
-        // 重新获取列表
-        await this.fetchResidentList()
+        void this.fetchResidentList()
         return response
       } catch (error) {
         console.error('创建居民失败:', error)
@@ -277,8 +273,7 @@ export const useHouseholdStore = defineStore('household', {
     async updateResident(id, residentData) {
       try {
         const response = await residentAPI.updateResident(id, residentData)
-        // 重新获取列表
-        await this.fetchResidentList()
+        void this.fetchResidentList()
         return response
       } catch (error) {
         console.error('更新居民失败:', error)
@@ -293,8 +288,7 @@ export const useHouseholdStore = defineStore('household', {
     async deleteResident(id) {
       try {
         const response = await residentAPI.deleteResident(id)
-        // 重新获取列表
-        await this.fetchResidentList()
+        void this.fetchResidentList()
         return response
       } catch (error) {
         console.error('删除居民失败:', error)

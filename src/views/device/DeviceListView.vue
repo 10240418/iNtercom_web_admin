@@ -320,7 +320,7 @@ const handleHealthCheck = async (row) => {
 
     await deviceAPI.healthCheck(row.id)
     ElMessage.success('健康检测完成')
-    await refreshDeviceList()
+    void refreshDeviceList()
   } catch (error) {
     if (error !== 'cancel') {
       console.error('健康检测失败:', error)
@@ -346,7 +346,7 @@ const handleDelete = async (row) => {
 
     await deviceAPI.deleteDevice(row.id)
     ElMessage.success('删除成功')
-    await refreshDeviceList()
+    void refreshDeviceList()
   } catch (error) {
     if (error !== 'cancel') {
       console.error('删除设备失败:', error)
@@ -377,7 +377,7 @@ const handleBatchDelete = async () => {
     await deviceAPI.batchDeleteDevices(selectedIds.value)
     ElMessage.success('批量删除成功')
     selectedIds.value = []
-    await refreshDeviceList()
+    void refreshDeviceList()
   } catch (error) {
     if (error !== 'cancel') {
       console.error('批量删除失败:', error)
@@ -401,12 +401,12 @@ const {
     if (pageSize) {
       pagination.pageSize = pageSize
     }
-    await refreshDeviceList()
+    void refreshDeviceList()
   },
   onPageSizeChange: async (pageSize) => {
     pagination.page = 1
     pagination.pageSize = pageSize
-    await refreshDeviceList()
+    void refreshDeviceList()
   },
   pageErrorMessage: '切换页面失败',
   sizeErrorMessage: '切换页面大小失败',

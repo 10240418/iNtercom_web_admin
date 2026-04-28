@@ -49,7 +49,6 @@ export const useAdminStore = defineStore('admin', {
      */
     async fetchAdminList(params = {}) {
       try {
-        console.log('AdminStore fetchAdminList开始')
         this.loading = true
 
         const queryParams = {
@@ -58,27 +57,16 @@ export const useAdminStore = defineStore('admin', {
           search: params.search || this.searchKeyword || undefined,
         }
 
-        console.log('请求参数:', queryParams)
-
         const response = await adminAPI.getAdminList(queryParams)
-        console.log('API响应原始数据:', response)
-
-        // 正确解析嵌套的数据结构
         const responseData = response.data
-        console.log('解析后的responseData:', responseData)
-
         this.adminList = Array.isArray(responseData.data) ? responseData.data : (responseData.data?.data || [])
-        console.log('设置adminList:', this.adminList)
 
-        // 更新分页信息
         this.pagination = {
           page: responseData.page || 1,
           pageSize: responseData.page_size || 10,
           total: responseData.total || 0,
           totalPages: responseData.total_pages || 0,
         }
-
-        console.log('更新分页信息:', this.pagination)
 
         return response
       } catch (error) {
@@ -92,11 +80,6 @@ export const useAdminStore = defineStore('admin', {
         throw error
       } finally {
         this.loading = false
-        console.log('AdminStore fetchAdminList完成，最终状态:', {
-          adminList: this.adminList,
-          adminCount: this.adminList.length,
-          hasAdmins: this.adminList.length > 0,
-        })
       }
     },
 
@@ -130,8 +113,7 @@ export const useAdminStore = defineStore('admin', {
     async createAdmin(adminData) {
       try {
         const response = await adminAPI.createAdmin(adminData)
-        // 重新获取列表
-        await this.fetchAdminList()
+        void this.fetchAdminList()
         return response
       } catch (error) {
         console.error('创建管理员失败:', error)
@@ -147,8 +129,7 @@ export const useAdminStore = defineStore('admin', {
     async updateAdmin(id, adminData) {
       try {
         const response = await adminAPI.updateAdmin(id, adminData)
-        // 重新获取列表
-        await this.fetchAdminList()
+        void this.fetchAdminList()
         return response
       } catch (error) {
         console.error('更新管理员失败:', error)
@@ -163,8 +144,7 @@ export const useAdminStore = defineStore('admin', {
     async deleteAdmin(id) {
       try {
         const response = await adminAPI.deleteAdmin(id)
-        // 重新获取列表
-        await this.fetchAdminList()
+        void this.fetchAdminList()
         return response
       } catch (error) {
         console.error('删除管理员失败:', error)
@@ -179,8 +159,7 @@ export const useAdminStore = defineStore('admin', {
     async batchDeleteAdmins(ids) {
       try {
         const response = await adminAPI.batchDeleteAdmins(ids)
-        // 重新获取列表
-        await this.fetchAdminList()
+        void this.fetchAdminList()
         return response
       } catch (error) {
         console.error('批量删除管理员失败:', error)

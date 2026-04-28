@@ -53,23 +53,27 @@ export const useStaffStore = defineStore('staff', {
     },
 
     async createStaff(payload) {
-      await staffAPI.createStaff(payload)
-      await this.fetchStaffList()
+      const response = await staffAPI.createStaff(payload)
+      void this.fetchStaffList()
+      return response
     },
 
     async updateStaff(id, payload) {
-      await staffAPI.updateStaff(id, payload)
-      await this.fetchStaffList()
+      const response = await staffAPI.updateStaff(id, payload)
+      void this.fetchStaffList()
+      return response
     },
 
     async deleteStaff(id) {
-      await staffAPI.deleteStaff(id)
-      await this.fetchStaffList()
+      const response = await staffAPI.deleteStaff(id)
+      void this.fetchStaffList()
+      return response
     },
 
     async batchDeleteStaff(ids = []) {
-      await Promise.all(ids.map((id) => staffAPI.deleteStaff(id)))
-      await this.fetchStaffList()
+      const response = await Promise.all(ids.map((id) => staffAPI.deleteStaff(id)))
+      void this.fetchStaffList()
+      return response
     },
   },
 })

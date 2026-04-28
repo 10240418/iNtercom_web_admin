@@ -667,7 +667,6 @@ const {
  */
 const handleHouseholdFormSuccess = () => {
   householdDialogVisible.value = false
-  void refreshHouseholdData()
 }
 
 /**
@@ -675,7 +674,6 @@ const handleHouseholdFormSuccess = () => {
  */
 const handleResidentFormSuccess = () => {
   residentDialogVisible.value = false
-  void refreshResidentData()
 }
 
 const { refresh: refreshBuildingData } = useListAutoRefresh({
