@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "http://39.108.49.167:20033/api/$1"
+      "destination": "https://intercom.api.skylinedances.com/api/$1"
     }
   ],
   "headers": [

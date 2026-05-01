@@ -19,7 +19,7 @@
       </el-form-item>
 
       <el-form-item label="手机号" prop="phone">
-        <el-input v-model="form.phone" placeholder="请输入手机号" />
+        <el-input v-model="form.phone" placeholder="可选，仅支持数字" />
       </el-form-item>
 
       <el-form-item label="邮箱" prop="email">
@@ -91,8 +91,7 @@ const rules = {
     { min: 1, max: 50, message: '姓名长度在 1 到 50 个字符', trigger: 'blur' },
   ],
   phone: [
-    { required: true, message: '请输入手机号', trigger: 'blur' },
-    { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号', trigger: 'blur' },
+    { pattern: /^\d*$/, message: '手机号只能包含数字', trigger: 'blur' },
   ],
   email: [
     { type: 'email', message: '请输入正确的邮箱格式', trigger: 'blur' },

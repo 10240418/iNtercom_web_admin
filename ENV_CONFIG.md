@@ -36,7 +36,7 @@ VITE_APP_TITLE=iNtercom管理端
 
 ```
 Name: VITE_API_BASE_URL
-Value: http://39.108.49.167:20033/api
+Value: https://intercom.api.skylinedances.com/api
 Environment: Production, Preview, Development
 ```
 
@@ -50,8 +50,8 @@ Environment: Production, Preview, Development
 
 **当前配置**（使用Vercel代理）：
 
-- **开发环境**: 使用Vite代理 `/api` -> `http://39.108.49.167:20033`
-- **生产环境**: 使用Vercel代理 `/api` -> `http://39.108.49.167:20033/api`
+- **开发环境**: 使用Vite代理 `/api` -> `https://intercom.api.skylinedances.com`
+- **生产环境**: 使用Vercel代理 `/api` -> `https://intercom.api.skylinedances.com/api`
 
 ## 注意事项
 
@@ -64,6 +64,6 @@ Environment: Production, Preview, Development
 
 `vercel.json` 文件配置了以下功能：
 
-1. **URL重写**：将 `/api/*` 请求转发到 `http://39.108.49.167:20033/api/*`
+1. **URL重写**：将 `/api/*` 请求转发到 `https://intercom.api.skylinedances.com/api/*`
 2. **CORS头部**：自动添加跨域请求所需的HTTP头部
 3. **认证支持**：支持带凭证的请求（Authorization header等）

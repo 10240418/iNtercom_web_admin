@@ -31,56 +31,6 @@ export default defineConfig(({ command }) => ({
   build: {
     rollupOptions: {
       output: {
-        manualChunks (id) {
-          if (!id.includes('node_modules')) return
-
-          if (id.includes('@element-plus/icons-vue')) {
-            return 'element-icons'
-          }
-
-          if (id.includes('element-plus')) {
-            const componentMatch = id.match(/element-plus\/es\/components\/([^/]+)/)
-            if (componentMatch) {
-              const componentName = componentMatch[1]
-
-              if (
-                ['button', 'form', 'input', 'input-number', 'select', 'option', 'option-group', 'checkbox', 'radio', 'switch'].includes(
-                  componentName,
-                )
-              ) {
-                return 'ep-form'
-              }
-
-              if (
-                ['table', 'pagination', 'card', 'dialog', 'tabs', 'tag', 'avatar', 'empty', 'descriptions'].includes(
-                  componentName,
-                )
-              ) {
-                return 'ep-data'
-              }
-
-              if (['message', 'message-box', 'loading', 'icon', 'scrollbar'].includes(componentName)) {
-                return 'ep-feedback'
-              }
-
-              return `ep-${componentName}`
-            }
-
-            if (id.includes('/es/locale/')) {
-              return 'ep-locale'
-            }
-
-            return 'ep-core'
-          }
-
-          if (id.includes('vue-router') || id.includes('pinia') || id.includes('/vue/')) {
-            return 'vue-core'
-          }
-
-          if (id.includes('axios') || id.includes('dayjs')) {
-            return 'app-vendor'
-          }
-        },
       },
     },
   },
@@ -92,7 +42,7 @@ export default defineConfig(({ command }) => ({
     },
     proxy: {
       '/api': {
-        target: 'http://43.139.69.15:20033',
+        target: 'https://intercom.api.skylinedances.com',
         changeOrigin: true,
         secure: false,
         configure: (proxy, _options) => {
